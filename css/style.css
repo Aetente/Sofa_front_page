@@ -151,11 +151,6 @@ body{
         width: 110vw;
     } */
 
-    #map{
-        width: 100%;
-        height: 400px;
-    }
-
     .hold-pics{
         display: grid;
         grid-template-columns: 3;
@@ -284,6 +279,5 @@ _:-moz-tree-row(hover),.choose-step{
 }
 
 #map{
-    width: 50%;
     height: 400px;
 }
