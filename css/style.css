@@ -1,0 +1,247 @@
+
+body{
+    font-family: "RobotoCondensed-Regular", sans-serif;
+    overflow-x: hidden;
+}
+.sofa-header{
+    position: fixed;
+    /* padding: 1em 0; */
+    /* width: 100%;
+    height: 100%; */
+    max-width: 0%;
+    max-height: 0%;
+    z-index: 110;
+    top: 0;
+    left:0;
+    padding: 0;
+}
+.cas-menu{
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    position: relative;
+    background-color: #00508c;
+    margin: 0;
+    width: 100vw;
+    text-align: center;
+    color: #fff;
+    z-index: 9999;
+}
+.hold-main-pic{
+    grid-row: 1/1;
+}
+
+
+.title-text{
+    grid-row: 2/1;
+}
+.hold-search{
+    grid-row: 3/1;
+}
+.real-side-menu{
+    align-items: center;
+    letter-spacing: 0.01px;
+    position: relative;
+    background-color: #aaaaaa;
+    /* position: inherit;
+    top: 0; */
+    width: 3em;
+    float: left;
+    text-align: center;
+    height: 100vh;
+    z-index: 9999;
+}
+.sofa-header.affix {
+    top: 0px;
+    z-index: 9999 !important;
+}
+.sofa-search{
+    margin: 10px 0;
+    border-radius: 1em;
+    height: 75%;
+    width: 50%;
+    color: #000;
+    /* transform: translateY(25%); */
+}
+#item1{
+    margin-left: 40px;
+}
+#item9{
+    margin-right: 40px;
+}
+.sofa-pics{
+    margin: 0.5em 1em;
+}
+.side-menu{
+    
+    height: 100%;
+    /* width: 20px; */
+    /* position: fixed; */
+    z-index: 200;
+}
+.side-menu-buttons{
+    font-size: 0.7em;
+    width: 3em;
+    margin-left: -1.3em;
+    text-align: center;
+}
+.real-side-menu p{
+    width: 3em;
+    /* margin-left:-1.3em; */
+}
+.sofa-row{
+    position: relative;
+    margin-top: 4em;
+    width:100%;
+    /* margin-top: 2.6em; */
+    z-index: 100;
+}
+
+.sofa-content{
+    margin-left: 5.5em;
+    /* float: right; */
+}
+.scroll-horiz{
+    position: relative;
+    height: 65px;
+    overflow: hidden;
+}
+.sofa-horiz{
+    white-space: nowrap;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    position: absolute;
+    z-index: 40;
+    width: 100%;
+    bottom: 0;
+    height: 55px;
+}
+
+.resizeText{
+    color: #fff;
+}
+
+.strange-pic{
+    margin: 1em 0em;
+}
+@media (max-width: 767px){
+    .strange-pic{
+        
+        margin: 5em 0em;
+    }   
+    /* .cas-menu{
+        width: 110vw;
+    } */
+
+    #map{
+        width: 100%;
+        height: 400px;
+    }
+}
+.sofa-horiz::-webkit-scrollbar { 
+    display: none;
+    overflow: -moz-scrollbars-none;
+}
+.menu-item{
+    display: inline-block;
+    border-right: 1px solid #aaaa;
+    word-wrap: break-word;
+    height: 50px;
+    /* overflow: hidden;
+    text-overflow: ellipsis; */
+    min-width: 170px;
+    max-width: 170px;
+    /* min-height: 160px;
+    max-height: 160px; */
+}
+.step-image{
+    display: inline-block;
+    max-width: 50px;
+    max-height: 50px;
+    /* margin-top:-37px; */
+}
+.choose-step{
+    font-size: 1em;
+    display: inline-block;
+    word-wrap: break-word;
+    min-width: 110px;
+    max-width: 110px;
+    white-space: initial;
+    overflow: hidden;
+    margin-bottom: 0px;
+    float: right;
+}
+_:-moz-tree-row(hover),.choose-step{
+    margin-top:-50px;
+}
+.scrollbutton-holder{
+    display: inline-block;
+    position: absolute;
+    z-index: 50; 
+    width: 100%;
+}
+.scroll-forward{
+    height: 65px;
+    width:40px;
+    /* margin-top: 0.5em; */
+    position: absolute;
+    background-color: #fff;
+    float: right;
+    right: 0;
+    text-align: center;
+    margin-right: -10px;
+}
+.scroll-back{
+    height: 65px;
+    width:40px;
+    /* margin-top: 0.5em; */
+    position: absolute;
+    background-color: #fff;
+    text-align: center;
+    margin-left: -10px;
+}
+.scroll-forward:hover, .scroll-back:hover{
+    cursor: pointer;
+    text-decoration: none;
+}
+.scroll-forward h1, .scroll-back h1{
+    height: 50px;
+    transform: translateY(-25%);
+}
+
+.description-text{
+    border-bottom: 1px solid black;
+}
+
+.map-filler{
+    background-color: rgba(200,200,200,1);
+}
+.step-header{
+    color: #fff;
+    background-color: #00508c;
+    align-items: center;
+}
+.step-img{
+    max-width: 50px;
+    max-height: 50px;
+    min-width: 50px;
+    min-height: 50px;
+    padding: 0;
+}
+
+.languages a:hover{
+    cursor: pointer;
+    text-decoration: none;
+}
+.languages{
+    width: 3em;
+    margin-left: -1em;
+}
+.textSize{
+    width: 3em;
+    margin-left: -1em;
+}
+
+#map{
+    width: 50%;
+    height: 400px;
+}
