@@ -13,10 +13,10 @@ let stepColors= [
     "#ba002b",
     "#50008c"
 ];//colors for steps
+let nowLanguage = "en";//current language, english by default
 
 
 function main(){
-    var nowLanguage = "en";
     
     $('.scroll-back').click(function () {
         $('.sofa-horiz').animate({
@@ -137,11 +137,12 @@ var options = {
     maximumAge: 0
   };
 
-function doMap(pos){
+//if succesided to get geolocation
+function successMap(pos){
     let coords = pos.coords;
     var uluru = {lat: coords.latitude, lng: coords.longitude};
         var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 4,
+          zoom: 10,
           center: uluru
         });
         var marker = new google.maps.Marker({
@@ -150,16 +151,17 @@ function doMap(pos){
         });
 }
 
-function error(err) {
+//if geolocation error happened
+function errorMap(err) {
     console.warn(`ERROR(${err.code}): ${err.message}`);
   };
 
-  $(window).on( 'resize',
+$(window).on( 'resize',
   function(){
       google.maps.event.trigger( map, 'resize' );
   }
 );
 
 function initMap(){
-    navigator.geolocation.getCurrentPosition(doMap, error, options);
+    navigator.geolocation.getCurrentPosition(successMap, errorMap, options);
 }
