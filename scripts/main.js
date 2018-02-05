@@ -1,7 +1,7 @@
 $().ready(main);
 
-const theUrl = "https://olimshelper.herokuapp.com/";
-let currentStep = 0;
+const theUrl = "https://olimshelper.herokuapp.com/";//api
+let currentStep = 0;//steps
 let stepColors= [
     "#00508c",
     "#35a000",
@@ -12,7 +12,8 @@ let stepColors= [
     "#d29600",
     "#ba002b",
     "#50008c"
-];
+];//colors for steps
+
 
 function main(){
     var nowLanguage = "en";
@@ -21,24 +22,24 @@ function main(){
         $('.sofa-horiz').animate({
             scrollLeft: '-=153'
         }, 1000, 'linear');
-    });
+    });//scroll steps
     $('.scroll-forward').click(function () {
         $('.sofa-horiz').animate({
             scrollLeft: '+=153'
         }, 1000, 'linear');
-    });
+    });//scroll steps
     $('.sofa-search').keypress(
         (e)=>{
             if(e.which==13&&$('.sofa-search').val()){
                 // console.log("https://www.google.com/search?q="+$('.sofa-search').val());
                 window.location.href = "https://www.google.com/search?q="+$('.sofa-search').val();
             }
-        }
+        }//search which is located above in right corner
     )
 
-    setDataByLang(nowLanguage);
-    setLanguage(nowLanguage);
-    highlightLanguage(nowLanguage);
+    setDataByLang(nowLanguage);//set all info
+    setLanguage(nowLanguage);//set change language buttons clicks in right menu
+    highlightLanguage(nowLanguage);//highlight choosen language
 }
 
 function setDataByLang(lang){
@@ -130,9 +131,15 @@ function setTitleText(nowLanguage){
     }
 }
 
-function initMap(){
-    function initMap() {
-        var uluru = {lat: -25.363, lng: 131.044};
+var options = {
+    enableHighAccuracy: true,
+    timeout: 5000,
+    maximumAge: 0
+  };
+
+function doMap(pos){
+    let coords = pos.coords;
+    var uluru = {lat: coords.latitude, lng: coords.longitude};
         var map = new google.maps.Map(document.getElementById('map'), {
           zoom: 4,
           center: uluru
@@ -141,5 +148,18 @@ function initMap(){
           position: uluru,
           map: map
         });
-      }
+}
+
+function error(err) {
+    console.warn(`ERROR(${err.code}): ${err.message}`);
+  };
+
+  $(window).on( 'resize',
+  function(){
+      google.maps.event.trigger( map, 'resize' );
+  }
+);
+
+function initMap(){
+    navigator.geolocation.getCurrentPosition(doMap, error, options);
 }
