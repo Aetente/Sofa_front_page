@@ -41,7 +41,7 @@ function main(){
     )
 
     setDataByLang(nowLanguage);//set all info
-    setLanguage(nowLanguage);//set change language buttons clicks in right menu
+    setLanguage();//set change language buttons clicks in right menu
     highlightLanguage(nowLanguage);//highlight choosen language
 }
 
@@ -62,7 +62,7 @@ function setDataByLang(lang){
     });
 }
 
-function setLanguage(nowLanguage){
+function setLanguage(){
     let qOfLang = $(".changeLang").length;
     for(var i=0; i<qOfLang; i++){
         // console.log( $(".changeLang")[i].getAttribute("id"));
@@ -83,7 +83,6 @@ function setButtonClicks(steps){
                 currentStep=(+theId.substring(4,theId.length))-1;
                 setColorHeaderInfo(currentStep);
                 setInfo(steps,currentStep);
-                //todo add update markers
                 fillMapWithPlaces(map,nowLanguage,currentStep,lat,lon,10);
             }
         );
@@ -181,9 +180,9 @@ function clearMap(places){
 
 function fillSofaAddresses(places){
     let descriptionHelp = $(".description-help");
+    descriptionHelp.empty();
     if(places.length>0){
         for(var i=0; i<places.length; i++){
-            console.log(places[i]);
             let sofaAddress = document.createElement("div");
             sofaAddress.className = "sofa-address";
             descriptionHelp.append(sofaAddress);
@@ -223,7 +222,6 @@ function fillMapWithPlaces(map,lang,step,lat,lon,rad){
     if(map!=null){
         // map.clearOverlays();
         let urlCurr = theUrl+`step/${lang}/${step+1}/area/${lat}/${lon}/${rad}`;
-        console.log("beginig to get places");
         $.ajax({
             url: urlCurr
         })
@@ -234,8 +232,6 @@ function fillMapWithPlaces(map,lang,step,lat,lon,rad){
         // })
         .then(function(placesArr){
            clearMap(places);
-            console.log(placesArr);
-            console.log("setting markers");
             if(placesArr.length!=0){
                 for(var i=0;i<placesArr.length;i++){
                     var marker = new google.maps.Marker({
@@ -247,10 +243,11 @@ function fillMapWithPlaces(map,lang,step,lat,lon,rad){
                     });
                     places.push(marker);
                 }
-                console.log("markers set");
                 fillSofaAddresses(placesArr);
             }
             else{
+                let descriptionHelp = $(".description-help");
+                descriptionHelp.empty();
                 console.log("no places found");
             }
         });
