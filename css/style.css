@@ -165,6 +165,11 @@ body{
     margin: 1em 0em;
 }
 @media (max-width: 767px){
+
+    .sofa-row {
+        margin-top: 7em;
+    }
+
     .strange-pic{
         margin: 5em 0em;
     }   

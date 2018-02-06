@@ -14,7 +14,10 @@ let stepColors= [
     "#50008c"
 ];//colors for steps
 let nowLanguage = "en";//current language, english by default
-
+let lat = 0;
+let lon = 0;
+let map = null;
+let places = [];
 
 function main(){
     
@@ -54,7 +57,8 @@ function setDataByLang(lang){
         setButtonClicks(steps)
         setInfo(steps,currentStep);
         setTitleText(lang);
-        highlightLanguage(lang)
+        highlightLanguage(lang);
+        fillMapWithPlaces(map,lang,currentStep,lat,lon,10);
     });
 }
 
@@ -79,6 +83,8 @@ function setButtonClicks(steps){
                 currentStep=(+theId.substring(4,theId.length))-1;
                 setColorHeaderInfo(currentStep);
                 setInfo(steps,currentStep);
+                //todo add update markers
+                fillMapWithPlaces(map,nowLanguage,currentStep,lat,lon,10);
             }
         );
     }
@@ -139,16 +145,18 @@ var options = {
 
 //if succesided to get geolocation
 function successMap(pos){
-    let coords = pos.coords;
-    var uluru = {lat: coords.latitude, lng: coords.longitude};
-        var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 10,
-          center: uluru
-        });
-        var marker = new google.maps.Marker({
-          position: uluru,
-          map: map
-        });
+    lat = pos.coords.latitude;
+    lon = pos.coords.longitude;
+    var uluru = {lat: lat, lng: lon};
+    map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 10,
+        center: uluru
+    });
+    var marker = new google.maps.Marker({
+        position: uluru,
+        map: map
+    });
+    fillMapWithPlaces(map,nowLanguage,currentStep,lat,lon,10);
 }
 
 //if geolocation error happened
@@ -161,6 +169,93 @@ $(window).on( 'resize',
       google.maps.event.trigger( map, 'resize' );
   }
 );
+
+function clearMap(places){
+    if(places.length>0){
+        for(var i=0; i<places.length; i++){
+            places[i].setMap(null);
+        }
+        places=[];
+    }
+}
+
+function fillSofaAddresses(places){
+    let descriptionHelp = $(".description-help");
+    if(places.length>0){
+        for(var i=0; i<places.length; i++){
+            console.log(places[i]);
+            let sofaAddress = document.createElement("div");
+            sofaAddress.className = "sofa-address";
+            descriptionHelp.append(sofaAddress);
+
+            let imAddress = document.createElement("img");
+            imAddress.className = "im-address";
+            sofaAddress.append(imAddress);
+
+            let addressInfo = document.createElement("div");
+            addressInfo.className = "address-info";
+            sofaAddress.append(addressInfo);
+
+            let nameH5 = document.createElement("h5");
+            nameH5.append(places[i].name);
+            sofaAddress.append(nameH5);
+
+            for(var j=0; j<places[i].phones.length; j++){
+                let phoneP = document.createElement("p");
+                phoneP.append(places[i].phones[j]);
+                sofaAddress.append(phoneP);
+            }
+
+            for(var k=0;k<places[i].schedule.length; k++){
+                let scheduleP = document.createElement("p");
+                scheduleP.append(places[i].schedule[k]);
+                sofaAddress.append(scheduleP);
+            }
+
+            let urlA = document.createElement("a");
+            urlA.append(places[i].url);
+            sofaAddress.append(urlA);
+        }
+    }
+}
+
+function fillMapWithPlaces(map,lang,step,lat,lon,rad){
+    if(map!=null){
+        // map.clearOverlays();
+        let urlCurr = theUrl+`step/${lang}/${step+1}/area/${lat}/${lon}/${rad}`;
+        console.log("beginig to get places");
+        $.ajax({
+            url: urlCurr
+        })
+        // fetch(urlCurr)
+        // .then(function (data) {
+        //     console.log("places request successfull");
+        //     return data.json;
+        // })
+        .then(function(placesArr){
+           clearMap(places);
+            console.log(placesArr);
+            console.log("setting markers");
+            if(placesArr.length!=0){
+                for(var i=0;i<placesArr.length;i++){
+                    var marker = new google.maps.Marker({
+                        map: map,
+                        place: {
+                        placeId: placesArr[i].placeId,
+                        location: { lat: placesArr[i].latitude, lng: placesArr[i].longitude}
+                        }
+                    });
+                    places.push(marker);
+                }
+                console.log("markers set");
+                fillSofaAddresses(placesArr);
+            }
+            else{
+                console.log("no places found");
+            }
+        });
+    }
+}
 
 function initMap(){
     navigator.geolocation.getCurrentPosition(successMap, errorMap, options);
