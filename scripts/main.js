@@ -19,6 +19,24 @@ let lon = 0;
 let map = null;
 let places = [];
 
+let icons = [
+    "images/mk_grey.png",
+    "images/mk_step_01.png",
+    "images/mk_step_02.png",
+    "images/mk_step_03.png",
+    "images/mk_step_04.png",
+    "images/mk_step_05.png",
+    "images/mk_step_06.png",
+    "images/mk_step_07.png",
+    "images/mk_step_08.png",
+    "images/mk_step_09.png",
+    "images/ic_my_location.png"
+];
+let geocoder;
+let weekDay = [
+    "mon","tue","wed","thu","fri","sat","sun"
+];
+
 function main(){
     
     $('.scroll-back').click(function () {
@@ -144,8 +162,19 @@ var options = {
 
 //if succesided to get geolocation
 function successMap(pos){
+    geocoder = new google.maps.Geocoder;
     lat = pos.coords.latitude;
     lon = pos.coords.longitude;
+    var img = new window.Image();
+    img.src = icons[10];
+    img.width/=10;
+    img.width/=10;
+    var icon = {
+        url: icons[10], // url
+        scaledSize: new google.maps.Size(20, 20), // scaled size
+        origin: new google.maps.Point(0,0), // origin
+        anchor: new google.maps.Point(0, 0) // anchor
+    };
     var uluru = {lat: lat, lng: lon};
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 10,
@@ -153,7 +182,8 @@ function successMap(pos){
     });
     var marker = new google.maps.Marker({
         position: uluru,
-        map: map
+        map: map,
+        icon: icon
     });
     fillMapWithPlaces(map,nowLanguage,currentStep,lat,lon,10);
 }
@@ -161,7 +191,9 @@ function successMap(pos){
 //if geolocation error happened
 function errorMap(err) {
     console.warn(`ERROR(${err.code}): ${err.message}`);
-  };
+    $(".step-description").css("grid-template-columns", "1fr");
+    $(".the-info").css("grid-template-columns","1fr");
+};
 
 $(window).on( 'resize',
   function(){
@@ -178,14 +210,84 @@ function clearMap(places){
     }
 }
 
+function onAddressClick(sofaAddress,markerNumber,place){
+    $(".sofa-address").hide(0);
+    console.log(markerNumber);
+    let descriptionHelp = $(".description-help");
+    let divToRemove =document.createElement("div");
+    divToRemove.className = "div-to-remove";
+    descriptionHelp.append(divToRemove);
+
+    let divWrap = document.createElement("div");
+    divToRemove.append(divWrap);
+
+    let markerInfo = document.createElement("div");
+    divWrap.append(markerInfo);
+
+    let nameH5 = document.createElement("h5");
+    nameH5.append(place.name);
+    markerInfo.append(nameH5);
+
+    for(var j=0; j<place.phones.length; j++){
+        markerInfo = document.createElement("div");
+        markerInfo.className = "marker-info";
+        divWrap.append(markerInfo);
+        let phoneH6 = document.createElement("h6");
+        phoneH6.append(place.phones[j]);
+        markerInfo.append(phoneH6);
+    }
+
+    for(var k=0; k<7;k++){
+        markerInfo = document.createElement("div");
+        markerInfo.className = "marker-info";
+        divWrap.append(markerInfo);
+        let scheduleP = document.createElement("p");
+        let strDay = place.schedule[k];
+        let nameWeek = document.createElement("p");
+        nameWeek.append(weekDay[k]);
+        scheduleP.append(strDay);
+        markerInfo.append(nameWeek);
+        markerInfo.append(scheduleP);
+    }
+
+
+    markerInfo = document.createElement("div");
+    divWrap.append(markerInfo);
+    let urlBtn = document.createElement("button");
+    urlBtn.append("Go to the site");
+    urlBtn.onclick = function(){
+        window.open("http://"+place.url,"_blank");
+    }
+    markerInfo.append(urlBtn);
+
+    markerInfo = document.createElement("div");
+    divWrap.append(markerInfo);
+    let closeBtn = document.createElement("button");
+    closeBtn.append("Close");
+    closeBtn.onclick = function(){
+        // window.open("http://"+place.url,"_blank");
+        closeCurrentMarker();
+    }
+    markerInfo.append(closeBtn);
+
+}
+
+function closeCurrentMarker(){
+    $(".div-to-remove").remove();
+    $(".sofa-address").show(0);
+}
+
 function fillSofaAddresses(places){
     let descriptionHelp = $(".description-help");
     descriptionHelp.empty();
+    console.log(places);
     if(places.length>0){
-        for(var i=0; i<places.length; i++){
+        for(let i=0; i<places.length; i++){
+            
             let sofaAddress = document.createElement("div");
-            sofaAddress.className = "sofa-address";
+            sofaAddress.className = "sofa-address marker"+i;
             descriptionHelp.append(sofaAddress);
+            sofaAddress.onclick = ()=> onAddressClick(sofaAddress,i,places[i]);
 
             let imAddress = document.createElement("img");
             imAddress.className = "im-address";
@@ -199,24 +301,65 @@ function fillSofaAddresses(places){
             nameH5.append(places[i].name);
             sofaAddress.append(nameH5);
 
-            for(var j=0; j<places[i].phones.length; j++){
-                let phoneP = document.createElement("p");
-                phoneP.append(places[i].phones[j]);
-                sofaAddress.append(phoneP);
-            }
-
-            for(var k=0;k<places[i].schedule.length; k++){
-                let scheduleP = document.createElement("p");
-                scheduleP.append(places[i].schedule[k]);
-                sofaAddress.append(scheduleP);
-            }
-
-            let urlA = document.createElement("a");
-            urlA.append(places[i].url);
-            sofaAddress.append(urlA);
+            let addressP = document.createElement("p");
+            let addressString = "address error";
+            geocoder.geocode({"placeId":places[i].placeId},
+            function(res, status){
+                if(status=="OK"){
+                    addressString = res[0].formatted_address;
+                    addressP.append(addressString);
+                    sofaAddress.append(addressP);
+                }
+                else{
+                    addressP.append(addressString);
+                    sofaAddress.append(addressP);
+                }
+            });
+            
         }
     }
 }
+
+// function fillSofaAddresses(places){
+//     let descriptionHelp = $(".description-help");
+//     descriptionHelp.empty();
+//     // console.log(places);
+//     if(places.length>0){
+//         for(var i=0; i<places.length; i++){
+//             let sofaAddress = document.createElement("div");
+//             sofaAddress.className = "sofa-address";
+//             descriptionHelp.append(sofaAddress);
+
+//             let imAddress = document.createElement("img");
+//             imAddress.className = "im-address";
+//             sofaAddress.append(imAddress);
+
+//             let addressInfo = document.createElement("div");
+//             addressInfo.className = "address-info";
+//             sofaAddress.append(addressInfo);
+
+//             let nameH5 = document.createElement("h5");
+//             nameH5.append(places[i].name);
+//             sofaAddress.append(nameH5);
+
+//             for(var j=0; j<places[i].phones.length; j++){
+//                 let phoneP = document.createElement("p");
+//                 phoneP.append(places[i].phones[j]);
+//                 sofaAddress.append(phoneP);
+//             }
+
+//             for(var k=0;k<places[i].schedule.length; k++){
+//                 let scheduleP = document.createElement("p");
+//                 scheduleP.append(places[i].schedule[k]);
+//                 sofaAddress.append(scheduleP);
+//             }
+
+//             let urlA = document.createElement("a");
+//             urlA.append(places[i].url);
+//             sofaAddress.append(urlA);
+//         }
+//     }
+// }
 
 function fillMapWithPlaces(map,lang,step,lat,lon,rad){
     if(map!=null){
@@ -234,8 +377,16 @@ function fillMapWithPlaces(map,lang,step,lat,lon,rad){
            clearMap(places);
             if(placesArr.length!=0){
                 for(var i=0;i<placesArr.length;i++){
+                    
+                    var icon = {
+                        url: icons[currentStep+1], // url
+                        scaledSize: new google.maps.Size(20, 30), // scaled size
+                        origin: new google.maps.Point(0,0), // origin
+                        anchor: new google.maps.Point(0, 0) // anchor
+                    };
                     var marker = new google.maps.Marker({
                         map: map,
+                        icon: icon,
                         place: {
                         placeId: placesArr[i].placeId,
                         location: { lat: placesArr[i].latitude, lng: placesArr[i].longitude}
