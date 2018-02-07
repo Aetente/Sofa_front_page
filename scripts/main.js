@@ -167,7 +167,7 @@ function setTitleText(nowLanguage){
 
 //if succesided to get geolocation
 function successMap(pos){
-    geocoder = new google.maps.Geocoder;//get the geocoder to decode placeIds in further
+    
     lat = pos.coords.latitude;
     lon = pos.coords.longitude;
     var icon = {
@@ -222,8 +222,6 @@ function highlightMarker(n){//highlight the chosen marker
                 anchor: new google.maps.Point(0, 0) // anchor
             };//new icon(grey one)
             markers[i].setIcon(icon);//set the grey icon
-        }
-        else{
         }
     }
 }
@@ -355,11 +353,14 @@ function fillSofaAddresses(places){
         }
     }
 }
+
+//TODO rewrite the arguments of the method so it would fit the API url request
 //fill the map with markers
 function fillMapWithPlaces(map,lang,step,lat,lon,rad){
     if(map!=null){//if the map was initialized
-        let urlCurr = theUrl+`step/${lang}/${step+1}/area/${lat}/${lon}/${rad}`;//url request
-        //TODO change the url to one where you get markers by step
+        // let urlCurr = theUrl+`step/${lang}/${step+1}/area/${lat}/${lon}/${rad}`;//url request
+        let urlCurr = theUrl+`step/${lang}/${step+1}/area/${lat}/${lon}/1/${rad}/1`;//url request
+        
         $.ajax({
             url: urlCurr
         })
@@ -396,5 +397,7 @@ function fillMapWithPlaces(map,lang,step,lat,lon,rad){
 }
 
 function initMap(){//initialize the google map
+    
+    geocoder = new google.maps.Geocoder;//get the geocoder to decode placeIds in further
     navigator.geolocation.getCurrentPosition(successMap, errorMap, options);//get location
 }
