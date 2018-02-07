@@ -36,6 +36,12 @@ let geocoder;//with this you decode placeId to get more information
 let weekDay = [
     "mon","tue","wed","thu","fri","sat","sun"
 ];//this will be required when you look info about marker
+//options for google maps
+var options = {
+    enableHighAccuracy: true,
+    timeout: 5000,
+    maximumAge: 0
+};
 
 function main(){
     
@@ -94,24 +100,26 @@ function setLanguage(){
 
 //set clicks in this menu according to the info you got
 function setButtonClicks(steps){
-    let theId = "item1";//
+    let theId = "item1";//this will be needed to get the value of new step, because every button ti change step contains the number of step
     for(var i=0;i<9;i++){
-        $("#item"+(i+1)).click(
+        $("#item"+(i+1)).click(//when button to change step clicked
             function(){
-                theId = $(this).attr("id");
-                currentStep=(+theId.substring(4,theId.length))-1;
-                setColorHeaderInfo(currentStep);
-                setInfo(steps,currentStep);
-                fillMapWithPlaces(map,nowLanguage,currentStep,lat,lon,10);
+                theId = $(this).attr("id");//get the id of the clicked button
+                currentStep=(+theId.substring(4,theId.length))-1;//change the value of current step
+                setColorHeaderInfo(currentStep);//set color for header of info according to chosen step
+                setInfo(steps,currentStep);//set the info according to the step
+                fillMapWithPlaces(map,nowLanguage,currentStep,lat,lon,10);//fill the map with markers according to the step
             }
         );
     }
 }
 
+//set the color of header of info of step according to chosen step
 function setColorHeaderInfo(currentStep){
     $(".step-header").css("background-color",stepColors[currentStep]);
 }
 
+//set the info according to step
 function setInfo(steps,numbStep){
     $(".step-head").text(steps[numbStep].title);
     $(".description-text").text(steps[numbStep].description);
@@ -119,12 +127,14 @@ function setInfo(steps,numbStep){
     $(".step-img").attr("src","images/step_0"+(numbStep+1)+".png");
 }
 
+//set the names of steps according to current language
 function setSelectSteps(steps){
     for(var i=0;i<steps.length;i++){
         $("#item"+(i+1)+" > .choose-step").text(steps[i].title);
     }
 }
 
+//highlight the chosen language
 function highlightLanguage(nowLanguage){
     let langs = $(".changeLang");
     for(var i=0; i< langs.length; i++){
@@ -133,6 +143,7 @@ function highlightLanguage(nowLanguage){
     $(`#${nowLanguage}`).css("color", "#00508c");
 }
 
+//set the site title to name according to language
 function setTitleText(nowLanguage){
     let title = $(".title-text");
     switch(nowLanguage){
@@ -154,43 +165,34 @@ function setTitleText(nowLanguage){
     }
 }
 
-var options = {
-    enableHighAccuracy: true,
-    timeout: 5000,
-    maximumAge: 0
-  };
-
 //if succesided to get geolocation
 function successMap(pos){
-    geocoder = new google.maps.Geocoder;
+    geocoder = new google.maps.Geocoder;//get the geocoder to decode placeIds in further
     lat = pos.coords.latitude;
     lon = pos.coords.longitude;
-    var img = new window.Image();
-    img.src = icons[10];
-    img.width/=10;
-    img.width/=10;
     var icon = {
         url: icons[10], // url
         scaledSize: new google.maps.Size(20, 20), // scaled size
         origin: new google.maps.Point(0,0), // origin
         anchor: new google.maps.Point(0, 0) // anchor
-    };
+    };//set icon for my position
     var uluru = {lat: lat, lng: lon};
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 10,
         center: uluru
-    });
+    });//create map
     var marker = new google.maps.Marker({
         position: uluru,
         map: map,
         icon: icon
-    });
-    fillMapWithPlaces(map,nowLanguage,currentStep,lat,lon,10);
+    });//put marker
+    fillMapWithPlaces(map,nowLanguage,currentStep,lat,lon,10);//fill the map with markers
 }
 
 //if geolocation error happened
 function errorMap(err) {
     console.warn(`ERROR(${err.code}): ${err.message}`);
+    //TODO it should set the geolocation for Tel-Aviv
     $(".step-description").css("grid-template-columns", "1fr");
     $(".the-info").css("grid-template-columns","1fr");
 };
@@ -199,9 +201,9 @@ $(window).on( 'resize',
   function(){
       google.maps.event.trigger( map, 'resize' );
   }
-);
+);//resize the map
 
-function clearMap(){
+function clearMap(){//clear markers
     if(markers.length>0){
         for(var i=0; i<markers.length; i++){
             markers[i].setMap(null);
@@ -238,25 +240,27 @@ function unhighlightMarkers(){//unhilight all markers
     }
 }
 
+//event when marker was clicked
 function onAddressClick(sofaAddress,markerNumber,place){
-    $(".sofa-address").hide(0);
-    highlightMarker(markerNumber);
-    let descriptionHelp = $(".description-help");
-    let divToRemove =document.createElement("div");
+    $(".sofa-address").hide(0);//hide all markers
+    highlightMarker(markerNumber);//highlight the chosen marker on the map
+    let descriptionHelp = $(".description-help");//get the marker container
+    let divToRemove =document.createElement("div");//create the element where the information about marker would be put, so that it could easily be removed without deleting data about all markers
     divToRemove.className = "div-to-remove";
     descriptionHelp.append(divToRemove);
 
-    let divWrap = document.createElement("div");
+    let divWrap = document.createElement("div");//create wrapper
+    //TODO this one is probably not needed, you probably could just put everything in divToRemove
     divToRemove.append(divWrap);
 
-    let markerInfo = document.createElement("div");
+    let markerInfo = document.createElement("div");//create wrapper which sometimes would be a grid or not depending on the className
     divWrap.append(markerInfo);
 
-    let nameH5 = document.createElement("h5");
+    let nameH5 = document.createElement("h5");//put the name of the marker
     nameH5.append(place.name);
     markerInfo.append(nameH5);
 
-    for(var j=0; j<place.phones.length; j++){
+    for(var j=0; j<place.phones.length; j++){//put the phone numbers of current marker
         markerInfo = document.createElement("div");
         markerInfo.className = "marker-info";
         divWrap.append(markerInfo);
@@ -265,7 +269,7 @@ function onAddressClick(sofaAddress,markerNumber,place){
         markerInfo.append(phoneH6);
     }
 
-    for(var k=0; k<7;k++){
+    for(var k=0; k<7;k++){//put the schedule of current marker
         markerInfo = document.createElement("div");
         markerInfo.className = "marker-info";
         divWrap.append(markerInfo);
@@ -279,7 +283,7 @@ function onAddressClick(sofaAddress,markerNumber,place){
     }
 
 
-    markerInfo = document.createElement("div");
+    markerInfo = document.createElement("div");//create a button to go to the website of current marker
     divWrap.append(markerInfo);
     let urlBtn = document.createElement("button");
     urlBtn.append("Go to the site");
@@ -288,7 +292,7 @@ function onAddressClick(sofaAddress,markerNumber,place){
     }
     markerInfo.append(urlBtn);
 
-    markerInfo = document.createElement("div");
+    markerInfo = document.createElement("div");//create a button to close the info about current marker
     divWrap.append(markerInfo);
     let closeBtn = document.createElement("button");
     closeBtn.append("Close");
@@ -300,47 +304,49 @@ function onAddressClick(sofaAddress,markerNumber,place){
 
 }
 
-function closeCurrentMarker(){
+function closeCurrentMarker(){//close the clicked marker
     unhighlightMarkers();
-    $(".div-to-remove").remove();
-    $(".sofa-address").show(0);
+    $(".div-to-remove").remove();//remove all previous data about the marker
+    $(".sofa-address").show(0);//show all markers
 }
 
+//fill the list of markers
 function fillSofaAddresses(places){
-    let descriptionHelp = $(".description-help");
-    descriptionHelp.empty();
-    console.log("fillSofaAddresses()")
-    console.log(places);
-    if(places.length>0){
+    let descriptionHelp = $(".description-help");//get the container of markers
+    descriptionHelp.empty();//empty it from previous markers
+    if(places.length>0){//if there are any places
         for(let i=0; i<places.length; i++){
-            
-            let sofaAddress = document.createElement("div");
-            sofaAddress.className = "sofa-address marker"+i;
-            descriptionHelp.append(sofaAddress);
-            sofaAddress.onclick = ()=> onAddressClick(sofaAddress,i,places[i]);
+            let sofaAddress = document.createElement("div");//create the div which contains some information about the marker
+            sofaAddress.className = "sofa-address marker"+i;//set the class name for it to set styles from css
+            descriptionHelp.append(sofaAddress);//append it to element where it should be contained
+            sofaAddress.onclick = ()=> onAddressClick(sofaAddress,i,places[i]);// set the click event. when it clicked the more information appears
 
-            let imAddress = document.createElement("img");
-            imAddress.className = "im-address";
-            sofaAddress.append(imAddress);
+            //the logic of adding following elements is pretty much the same
 
-            let addressInfo = document.createElement("div");
-            addressInfo.className = "address-info";
-            sofaAddress.append(addressInfo);
+            // let imAddress = document.createElement("img");//add the container for image
+            // //it wont probably be needed
+            // imAddress.className = "im-address";
+            // sofaAddress.append(imAddress);
 
-            let nameH5 = document.createElement("h5");
+            // let addressInfo = document.createElement("div");//add the 
+            // addressInfo.className = "address-info";
+            // sofaAddress.append(addressInfo);
+
+            let nameH5 = document.createElement("h5");//add the name of marker
             nameH5.append(places[i].name);
             sofaAddress.append(nameH5);
 
-            let addressP = document.createElement("p");
+            let addressP = document.createElement("p");//add the address for marker
             let addressString = "address error";
-            geocoder.geocode({"placeId":places[i].placeId},
+            geocoder.geocode({"placeId":places[i].placeId},//decode the placeId to get address
             function(res, status){
                 if(status=="OK"){
                     addressString = res[0].formatted_address;
                     addressP.append(addressString);
                     sofaAddress.append(addressP);
                 }
-                else{
+                else{//TODO what should happen when you dont get the address(it happens a lot more frequently than expected)
+                    console.log("connection error");
                     addressP.append(addressString);
                     sofaAddress.append(addressP);
                 }
@@ -358,6 +364,7 @@ function fillMapWithPlaces(map,lang,step,lat,lon,rad){
             url: urlCurr
         })
         .then(function(placesArr){
+            console.log(placesArr);
            clearMap();//clear map from markers if threre are already some
             if(placesArr.length!=0){//if there are any places
                 for(var i=0;i<placesArr.length;i++){
