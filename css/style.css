@@ -349,3 +349,13 @@ _:-moz-tree-row(hover),.choose-step{
     /* width: 50vw; */
     height: 400px;
 }
+
+.control-list-div{
+    background-color : #fff;
+    color : rgb(25,25,25);
+    font-family : 'Roboto,Arial,sans-serif';
+    font-size : 16px;
+    line-height : 38px;
+    padding-left : 5px;
+    padding-right : 5px;
+}

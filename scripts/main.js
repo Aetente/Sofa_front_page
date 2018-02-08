@@ -17,6 +17,7 @@ let nowLanguage = "en";//current language, english by default
 let lat = 0;//latitude
 let lon = 0;//longitude
 let map = null;//google maps
+let myMarker = null;//the marker which shows your location
 let markers = [];//markers on map
 
 let icons = [
@@ -42,6 +43,8 @@ var options = {
     timeout: 5000,
     maximumAge: 0
 };
+let cityList = [];//the list of cities which will appear when geolocation is locked
+let currentCity;
 
 function main(){
     
@@ -94,6 +97,7 @@ function setLanguage(){
             function(){
                 nowLanguage = this.getAttribute("id");//set the nowLanguage global variable
                 setDataByLang(nowLanguage);//set the data according to langugage you chose
+                setLocationList();
             };
     }
 }
@@ -165,11 +169,15 @@ function setTitleText(nowLanguage){
     }
 }
 
-//if succesided to get geolocation
-function successMap(pos){
-    
-    lat = pos.coords.latitude;
-    lon = pos.coords.longitude;
+function changePosition(lat,lon){
+    console.log(lat, lon);
+    myMarker.setPosition({lat:lat,lng:lon});
+    map.setCenter({lat:lat,lng:lon});
+    fillMapWithPlaces(map,nowLanguage,currentStep,lat,lon,10);
+}
+
+function setMap(lat,lon){
+    map = null;
     var icon = {
         url: icons[10], // url
         scaledSize: new google.maps.Size(20, 20), // scaled size
@@ -178,10 +186,10 @@ function successMap(pos){
     };//set icon for my position
     var uluru = {lat: lat, lng: lon};
     map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 10,
+        zoom: 12,//TODO set the zoom according to in which radius were markers found
         center: uluru
     });//create map
-    var marker = new google.maps.Marker({
+    myMarker = new google.maps.Marker({
         position: uluru,
         map: map,
         icon: icon
@@ -189,13 +197,92 @@ function successMap(pos){
     fillMapWithPlaces(map,nowLanguage,currentStep,lat,lon,10);//fill the map with markers
 }
 
+//if succesided to get geolocation
+function successMap(pos){
+    lat = pos.coords.latitude;
+    lon = pos.coords.longitude;
+    setMap(lat,lon);
+}
+
+//FIXME the first value of select must be Tel Aviv
+
+function setLocationList(){
+    let urlCurr = theUrl + `${nowLanguage}/city`;
+    $.ajax({
+        url: urlCurr
+    })
+    .then(
+        (data)=>{
+            cityList = data;
+            $(".hold-list-div").remove();
+            let holdListDiv = document.createElement("div");
+            holdListDiv.className = "hold-list-div";
+
+            let controlListDiv = document.createElement("div");
+            controlListDiv.className = "control-list-div";
+            holdListDiv.append(controlListDiv);
+
+            let listOfCitiesSelect = document.createElement("select");
+            for(let i=0; i< cityList.length; i++){
+                let cityOption = document.createElement("option");
+                cityOption.innerHTML = cityList[i].name;
+                cityOption.value = cityList[i].latitude+"|"+cityList[i].longitude;
+                listOfCitiesSelect.append(cityOption);
+            }
+            listOfCitiesSelect.value = currentCity.name;
+            listOfCitiesSelect.onchange = function(){
+                console.log(listOfCitiesSelect.value);
+                let coords = listOfCitiesSelect.value.split("|");
+                lat = +coords[0];
+                lon = +coords[1];
+                changePosition(lat, lon);
+            }
+            controlListDiv.append(listOfCitiesSelect);
+
+            holdListDiv.index = 1;
+            map.controls[google.maps.ControlPosition.TOP_CENTER].push(holdListDiv);
+        }
+    );
+}
 //if geolocation error happened
 function errorMap(err) {
     console.warn(`ERROR(${err.code}): ${err.message}`);
     //TODO it should set the geolocation for Tel-Aviv
-    $(".step-description").css("grid-template-columns", "1fr");
-    $(".the-info").css("grid-template-columns","1fr");
+    // $(".step-description").css("grid-template-columns", "1fr");
+    // $(".the-info").css("grid-template-columns","1fr");
+    let urlCurr = theUrl + `${nowLanguage}/city`;
+    $.ajax({
+        url: urlCurr
+    })
+    .then(
+        (data)=>{
+            cityList = data;
+            currentCity = data.find(
+                (city)=>{
+                    if(city.name=="Tel Aviv"||city.name == "תל אביב"||city.name=="Тель-Авив"){
+                        return city;
+                    }
+                }
+            );
+            lat = currentCity.latitude;
+            lon = currentCity.longitude;
+            setMap(lat,lon);
+            setLocationList()
+        }
+    );
 };
+
+function loadCityList(){
+    let urlCurr = theUrl + `${nowLanguage}/city`;
+    $.ajax({
+        url: urlCurr
+    })
+    .then(
+        (data)=>{
+            cityList = data;
+        }
+    );
+}
 
 $(window).on( 'resize',
   function(){
@@ -365,7 +452,7 @@ function fillMapWithPlaces(map,lang,step,lat,lon,rad){
             url: urlCurr
         })
         .then(function(placesArr){
-            console.log(placesArr);
+            // console.log(placesArr);
            clearMap();//clear map from markers if threre are already some
             if(placesArr.length!=0){//if there are any places
                 for(var i=0;i<placesArr.length;i++){
