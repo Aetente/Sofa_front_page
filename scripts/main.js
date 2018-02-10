@@ -51,12 +51,12 @@ function main(){
     $('.scroll-back').click(function () {
         $('.sofa-horiz').animate({
             scrollLeft: '-=153'
-        }, 1000, 'linear');
+        }, 500, 'linear');
     });//scroll steps back
     $('.scroll-forward').click(function () {
         $('.sofa-horiz').animate({
             scrollLeft: '+=153'
-        }, 1000, 'linear');
+        }, 500, 'linear');
     });//scroll steps forward
     $('.sofa-search').keypress(
         (e)=>{
@@ -72,12 +72,33 @@ function main(){
     highlightLanguage(nowLanguage);//highlight choosen language
 }
 
+function showLoading(){
+    $(".loading-window").show(0);
+}
+
+function hideLoading(){
+    $(".loading-window").hide(100);
+}
+
+function setRightTextAlign(){
+    $(".info-of-step").css("text-align","right");
+    // $(".title-text").css("text-align","right");
+    
+}
+
+function setLeftTextAlign(){
+    $(".info-of-step").css("text-align","left");
+    // $(".title-text").css("text-align","left");
+}
+
 //set all info
 function setDataByLang(lang){
+    showLoading();
     let urlCurr = theUrl+lang;//url to get info by language
     $.ajax({
         url: urlCurr
     }).then(function (data) {
+        lang=="he"?setRightTextAlign():setLeftTextAlign();
         let steps = data.steps;//get info about steps
         steps.sort((a,b)=>a.numberOfStep-b.numberOfStep);//sort the array of objects, because steps are not in the right order
         setSelectSteps(steps);//set text for menu where you choose step
@@ -86,6 +107,7 @@ function setDataByLang(lang){
         setTitleText(lang);//set new title according to language you chose
         highlightLanguage(lang);//highlight the chosen language
         fillMapWithPlaces(map,lang,currentStep,lat,lon,10);//fill the map with markers
+        hideLoading();
     });
 }
 
@@ -101,6 +123,8 @@ function setLanguage(){
             };
     }
 }
+
+
 
 //set clicks in this menu according to the info you got
 function setButtonClicks(steps){
@@ -152,19 +176,19 @@ function setTitleText(nowLanguage){
     let title = $(".title-text");
     switch(nowLanguage){
         case "en":
-            title.text("10 STEPS OF A NEW REPRESENTATIVE");
+            title.text("10 STEPS OF A NEW REPATRIATE");
             break;
         case "ru":
             title.text("10 ШАГОВ НОВОГО РЕПАТРИАНТА");
             break;
         case "he":
-            title.text("שלבים של נציג חדש 10");
+            title.text("עשר שלבים של עולה חדש");
             break;
         case "fr":
-            title.text("10 ÉTAPES D'UN NOUVEAU REPRÉSENTANT");
+            title.text("10 ÉTAPES D'UN NOUVEAU RAPATRIANT");
             break;
         default:
-            title.text("10 STEPS OF A NEW REPRESENTATIVE");
+            title.text("10 STEPS OF A NEW REPATRIATE");
             break;
     }
 }
@@ -247,7 +271,6 @@ function setLocationList(){
 //if geolocation error happened
 function errorMap(err) {
     console.warn(`ERROR(${err.code}): ${err.message}`);
-    //TODO it should set the geolocation for Tel-Aviv
     // $(".step-description").css("grid-template-columns", "1fr");
     // $(".the-info").css("grid-template-columns","1fr");
     let urlCurr = theUrl + `${nowLanguage}/city`;
@@ -271,18 +294,6 @@ function errorMap(err) {
         }
     );
 };
-
-function loadCityList(){
-    let urlCurr = theUrl + `${nowLanguage}/city`;
-    $.ajax({
-        url: urlCurr
-    })
-    .then(
-        (data)=>{
-            cityList = data;
-        }
-    );
-}
 
 $(window).on( 'resize',
   function(){
@@ -327,6 +338,8 @@ function unhighlightMarkers(){//unhilight all markers
 
 //event when marker was clicked
 function onAddressClick(sofaAddress,markerNumber,place){
+
+    //TODO center the elements
     $(".sofa-address").hide(0);//hide all markers
     highlightMarker(markerNumber);//highlight the chosen marker on the map
     let descriptionHelp = $(".description-help");//get the marker container
@@ -339,28 +352,41 @@ function onAddressClick(sofaAddress,markerNumber,place){
     divToRemove.append(divWrap);
 
     let markerInfo = document.createElement("div");//create wrapper which sometimes would be a grid or not depending on the className
+    markerInfo.className = "div-to-make-flex-work";
     divWrap.append(markerInfo);
 
     let nameH5 = document.createElement("h5");//put the name of the marker
     nameH5.append(place.name);
+    nameH5.className = "make-flex";
     markerInfo.append(nameH5);
+
+    let phoneH6 = document.createElement("h6");//put the name of the marker
+    phoneH6.append("PHONES:");
+    divWrap.append(phoneH6);
 
     for(var j=0; j<place.phones.length; j++){//put the phone numbers of current marker
         markerInfo = document.createElement("div");
-        markerInfo.className = "marker-info";
+        markerInfo.className = "div-to-make-flex-work";
         divWrap.append(markerInfo);
-        let phoneH6 = document.createElement("h6");
-        phoneH6.append(place.phones[j]);
-        markerInfo.append(phoneH6);
+        let phoneP = document.createElement("p");
+        phoneP.className = "make-flex";
+        phoneP.append(place.phones[j]);
+        markerInfo.append(phoneP);
     }
+
+    let scheduleH6 = document.createElement("h6");//put the name of the marker
+    scheduleH6.append("SCHEDULE:");
+    divWrap.append(scheduleH6);
 
     for(var k=0; k<7;k++){//put the schedule of current marker
         markerInfo = document.createElement("div");
         markerInfo.className = "marker-info";
         divWrap.append(markerInfo);
         let scheduleP = document.createElement("p");
+        scheduleP.className = "make-flex";
         let strDay = place.schedule[k];
         let nameWeek = document.createElement("p");
+        nameWeek.className = "make-flex";
         nameWeek.append(weekDay[k]);
         scheduleP.append(strDay);
         markerInfo.append(nameWeek);
@@ -372,6 +398,7 @@ function onAddressClick(sofaAddress,markerNumber,place){
     divWrap.append(markerInfo);
     let urlBtn = document.createElement("button");
     urlBtn.append("Go to the site");
+    
     urlBtn.onclick = function(){
         window.open("http://"+place.url,"_blank");
     }

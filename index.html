@@ -5,23 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Sofa</title>
     <link rel="shortcut icon" type="image/png" href="images/ic_launcher.png"/>
-  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
-  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-rtl/3.4.0/css/bootstrap-rtl.min.css"> -->
-  
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
-    <!-- <link rel="stylesheet" href="css/bootstrap.min.css">
-    <script src="scripts/jquery-3.2.1.min.js"></script>
-    <script src="scripts/Popper.js"></script>
-	<script src="scripts/bootstrap.min.js"></script> -->
-        <script defer src="scripts/main.js"></script>
-        <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6thMLQSj4zVrofw-UAUkXu_5_D3ucCEI&callback=initMap">
-        </script>
-        <link rel="stylesheet" href="css/fonts.css" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script defer src="scripts/main.js"></script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6thMLQSj4zVrofw-UAUkXu_5_D3ucCEI&callback=initMap">
+    </script>
+    <link rel="stylesheet" href="css/fonts.css" type="text/css">
     <link rel="stylesheet" href="css/style.css" type="text/css">
 </head>
 <body>
+    <div class="loading-window">
+        <p class="loading-text">LOADING...</p>
+    </div>
     <header class="sofa-header">
         
         <div class="cas-menu">
@@ -117,6 +112,7 @@
                             <img class="step-image" src="images/step_09.png">
                             <p class="choose-step">Converting a Driver's License</p>
                     </a>
+                    <a id="item-filler"></a>
                 </section>
                 <section class="scrollbutton-holder">
                         
