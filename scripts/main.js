@@ -50,12 +50,12 @@ function main(){
     
     $('.scroll-back').click(function () {
         $('.sofa-horiz').animate({
-            scrollLeft: '-=153'
+            scrollLeft: '-=170'
         }, 500, 'linear');
     });//scroll steps back
     $('.scroll-forward').click(function () {
         $('.sofa-horiz').animate({
-            scrollLeft: '+=153'
+            scrollLeft: '+=170'
         }, 500, 'linear');
     });//scroll steps forward
     $('.sofa-search').keypress(
@@ -82,13 +82,13 @@ function hideLoading(){
 
 function setRightTextAlign(){
     $(".info-of-step").css("text-align","right");
-    // $(".title-text").css("text-align","right");
+    $(".menu-item p").css("text-align","right");
     
 }
 
 function setLeftTextAlign(){
     $(".info-of-step").css("text-align","left");
-    // $(".title-text").css("text-align","left");
+    $(".menu-item p").css("text-align","left");
 }
 
 //set all info
@@ -194,7 +194,6 @@ function setTitleText(nowLanguage){
 }
 
 function changePosition(lat,lon){
-    console.log(lat, lon);
     myMarker.setPosition({lat:lat,lng:lon});
     map.setCenter({lat:lat,lng:lon});
     fillMapWithPlaces(map,nowLanguage,currentStep,lat,lon,10);
@@ -228,8 +227,6 @@ function successMap(pos){
     setMap(lat,lon);
 }
 
-//FIXME the first value of select must be Tel Aviv
-
 function setLocationList(){
     let urlCurr = theUrl + `${nowLanguage}/city`;
     $.ajax({
@@ -246,22 +243,29 @@ function setLocationList(){
             controlListDiv.className = "control-list-div";
             holdListDiv.append(controlListDiv);
 
+            let currentCityIndex = 0;
             let listOfCitiesSelect = document.createElement("select");
             for(let i=0; i< cityList.length; i++){
+                let strCoords = cityList[i].latitude+"|"+cityList[i].longitude;
+                if(strCoords==currentCity){
+                    currentCityIndex = i;
+                }
                 let cityOption = document.createElement("option");
+                cityOption.name = cityList[i].name;
                 cityOption.innerHTML = cityList[i].name;
-                cityOption.value = cityList[i].latitude+"|"+cityList[i].longitude;
+                cityOption.value = strCoords;
                 listOfCitiesSelect.append(cityOption);
             }
-            listOfCitiesSelect.value = currentCity.name;
+            
             listOfCitiesSelect.onchange = function(){
-                console.log(listOfCitiesSelect.value);
+                currentCity = listOfCitiesSelect.value;
                 let coords = listOfCitiesSelect.value.split("|");
                 lat = +coords[0];
                 lon = +coords[1];
                 changePosition(lat, lon);
             }
             controlListDiv.append(listOfCitiesSelect);
+            listOfCitiesSelect.value = cityList[currentCityIndex].latitude+"|"+cityList[currentCityIndex].longitude;
 
             holdListDiv.index = 1;
             map.controls[google.maps.ControlPosition.TOP_CENTER].push(holdListDiv);
@@ -280,15 +284,17 @@ function errorMap(err) {
     .then(
         (data)=>{
             cityList = data;
-            currentCity = data.find(
+            let TelAviv = null;
+            TelAviv = data.find(
                 (city)=>{
                     if(city.name=="Tel Aviv"||city.name == "תל אביב"||city.name=="Тель-Авив"){
                         return city;
                     }
                 }
             );
-            lat = currentCity.latitude;
-            lon = currentCity.longitude;
+            currentCity = TelAviv.latitude+"|"+TelAviv.longitude;
+            lat = TelAviv.latitude;
+            lon = TelAviv.longitude;
             setMap(lat,lon);
             setLocationList()
         }
@@ -339,7 +345,6 @@ function unhighlightMarkers(){//unhilight all markers
 //event when marker was clicked
 function onAddressClick(sofaAddress,markerNumber,place){
 
-    //TODO center the elements
     $(".sofa-address").hide(0);//hide all markers
     highlightMarker(markerNumber);//highlight the chosen marker on the map
     let descriptionHelp = $(".description-help");//get the marker container
@@ -348,13 +353,22 @@ function onAddressClick(sofaAddress,markerNumber,place){
     descriptionHelp.append(divToRemove);
 
     let divWrap = document.createElement("div");//create wrapper
-    //TODO this one is probably not needed, you probably could just put everything in divToRemove
-    divToRemove.append(divWrap);
+     divToRemove.append(divWrap);
 
-    let markerInfo = document.createElement("div");//create wrapper which sometimes would be a grid or not depending on the className
+    let markerInfo = document.createElement("div");//create a button to close the info about current marker
+    divWrap.append(markerInfo);
+    let closeBtn = document.createElement("button");
+    closeBtn.append("CLOSE");
+    closeBtn.className = "marker-btn";
+    closeBtn.onclick = function(){
+        // window.open("http://"+place.url,"_blank");
+        closeCurrentMarker();
+    }
+    markerInfo.append(closeBtn);
+
+    markerInfo = document.createElement("div");//create wrapper which sometimes would be a grid or not depending on the className
     markerInfo.className = "div-to-make-flex-work";
     divWrap.append(markerInfo);
-
     let nameH5 = document.createElement("h5");//put the name of the marker
     nameH5.append(place.name);
     nameH5.className = "make-flex";
@@ -397,22 +411,14 @@ function onAddressClick(sofaAddress,markerNumber,place){
     markerInfo = document.createElement("div");//create a button to go to the website of current marker
     divWrap.append(markerInfo);
     let urlBtn = document.createElement("button");
-    urlBtn.append("Go to the site");
-    
+    urlBtn.append("GO TO THE SITE");
+    urlBtn.className = "marker-btn";
     urlBtn.onclick = function(){
         window.open("http://"+place.url,"_blank");
     }
     markerInfo.append(urlBtn);
 
-    markerInfo = document.createElement("div");//create a button to close the info about current marker
-    divWrap.append(markerInfo);
-    let closeBtn = document.createElement("button");
-    closeBtn.append("Close");
-    closeBtn.onclick = function(){
-        // window.open("http://"+place.url,"_blank");
-        closeCurrentMarker();
-    }
-    markerInfo.append(closeBtn);
+    
 
 }
 

@@ -1,6 +1,12 @@
 h1{
     font-size: 2em;
 }
+h6{
+    padding: 1em;
+}
+a{
+    color: black;
+}
 
 .loading-window{
     position: fixed;
@@ -11,18 +17,23 @@ h1{
     background-color: rgb(240,240,240);
     text-align: center;
     z-index: 9999;
+    display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .loading-text{
     display: flex;
+    align-items: center;
+    justify-content: center;
     flex-flow: column;
     align-self: center;
 }
 
 .menu-item p {
     display: block;
+    padding-right: 0.2em;
+    padding-left: 0.2em;
     -webkit-margin-before: 0em;
     -webkit-margin-after: 0em;
     -webkit-margin-start: 0px;
@@ -400,4 +411,11 @@ _:-moz-tree-row(hover),.choose-step{
     line-height : 38px;
     padding-left : 5px;
     padding-right : 5px;
+}
+
+.marker-btn{
+    width: 100%;
+    background-color: #F0F0F0;
+    border: none;
+    cursor: pointer;
 }
