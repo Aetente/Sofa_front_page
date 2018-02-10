@@ -241,7 +241,7 @@ function setLocationList(){
 
             let controlListDiv = document.createElement("div");
             controlListDiv.className = "control-list-div";
-            holdListDiv.append(controlListDiv);
+            holdListDiv.appendChild(controlListDiv);
 
             let currentCityIndex = 0;
             let listOfCitiesSelect = document.createElement("select");
@@ -254,7 +254,7 @@ function setLocationList(){
                 cityOption.name = cityList[i].name;
                 cityOption.innerHTML = cityList[i].name;
                 cityOption.value = strCoords;
-                listOfCitiesSelect.append(cityOption);
+                listOfCitiesSelect.appendChild(cityOption);
             }
             
             listOfCitiesSelect.onchange = function(){
@@ -264,7 +264,7 @@ function setLocationList(){
                 lon = +coords[1];
                 changePosition(lat, lon);
             }
-            controlListDiv.append(listOfCitiesSelect);
+            controlListDiv.appendChild(listOfCitiesSelect);
             listOfCitiesSelect.value = cityList[currentCityIndex].latitude+"|"+cityList[currentCityIndex].longitude;
 
             holdListDiv.index = 1;
@@ -353,70 +353,69 @@ function onAddressClick(sofaAddress,markerNumber,place){
     descriptionHelp.append(divToRemove);
 
     let divWrap = document.createElement("div");//create wrapper
-     divToRemove.append(divWrap);
+     divToRemove.appendChild(divWrap);
 
     let markerInfo = document.createElement("div");//create a button to close the info about current marker
-    divWrap.append(markerInfo);
+    divWrap.appendChild(markerInfo);
     let closeBtn = document.createElement("button");
-    closeBtn.append("CLOSE");
+    closeBtn.innerText = "CLOSE";
     closeBtn.className = "marker-btn";
     closeBtn.onclick = function(){
-        // window.open("http://"+place.url,"_blank");
         closeCurrentMarker();
     }
-    markerInfo.append(closeBtn);
+    markerInfo.appendChild(closeBtn);
 
     markerInfo = document.createElement("div");//create wrapper which sometimes would be a grid or not depending on the className
     markerInfo.className = "div-to-make-flex-work";
-    divWrap.append(markerInfo);
+    divWrap.appendChild(markerInfo);
     let nameH5 = document.createElement("h5");//put the name of the marker
-    nameH5.append(place.name);
+    nameH5.innerText = place.name;
     nameH5.className = "make-flex";
-    markerInfo.append(nameH5);
+    markerInfo.appendChild(nameH5);
 
     let phoneH6 = document.createElement("h6");//put the name of the marker
-    phoneH6.append("PHONES:");
-    divWrap.append(phoneH6);
+    phoneH6.innerText = "PHONES:";
+    divWrap.appendChild(phoneH6);
 
     for(var j=0; j<place.phones.length; j++){//put the phone numbers of current marker
         markerInfo = document.createElement("div");
         markerInfo.className = "div-to-make-flex-work";
-        divWrap.append(markerInfo);
+        divWrap.appendChild(markerInfo);
         let phoneP = document.createElement("p");
         phoneP.className = "make-flex";
-        phoneP.append(place.phones[j]);
-        markerInfo.append(phoneP);
+        phoneP.innerText = place.phones[j];
+        markerInfo.appendChild(phoneP);
     }
 
     let scheduleH6 = document.createElement("h6");//put the name of the marker
-    scheduleH6.append("SCHEDULE:");
-    divWrap.append(scheduleH6);
+    scheduleH6.innerText = "SCHEDULE:";
+    divWrap.appendChild(scheduleH6);
 
     for(var k=0; k<7;k++){//put the schedule of current marker
         markerInfo = document.createElement("div");
         markerInfo.className = "marker-info";
-        divWrap.append(markerInfo);
+        divWrap.appendChild(markerInfo);
         let scheduleP = document.createElement("p");
         scheduleP.className = "make-flex";
         let strDay = place.schedule[k];
         let nameWeek = document.createElement("p");
         nameWeek.className = "make-flex";
-        nameWeek.append(weekDay[k]);
-        scheduleP.append(strDay);
-        markerInfo.append(nameWeek);
-        markerInfo.append(scheduleP);
+        nameWeek.innerText = weekDay[k];
+        scheduleP.innerText = strDay;
+        markerInfo.appendChild(nameWeek);
+        markerInfo.appendChild(scheduleP);
     }
 
 
     markerInfo = document.createElement("div");//create a button to go to the website of current marker
-    divWrap.append(markerInfo);
+    divWrap.appendChild(markerInfo);
     let urlBtn = document.createElement("button");
-    urlBtn.append("GO TO THE SITE");
+    urlBtn.innerText = "GO TO THE SITE";
     urlBtn.className = "marker-btn";
     urlBtn.onclick = function(){
         window.open("http://"+place.url,"_blank");
     }
-    markerInfo.append(urlBtn);
+    markerInfo.appendChild(urlBtn);
 
     
 
@@ -436,7 +435,7 @@ function fillSofaAddresses(places){
         for(let i=0; i<places.length; i++){
             let sofaAddress = document.createElement("div");//create the div which contains some information about the marker
             sofaAddress.className = "sofa-address marker"+i;//set the class name for it to set styles from css
-            descriptionHelp.append(sofaAddress);//append it to element where it should be contained
+            descriptionHelp.append(sofaAddress);//appendChild it to element where it should be contained
             sofaAddress.onclick = ()=> onAddressClick(sofaAddress,i,places[i]);// set the click event. when it clicked the more information appears
 
             //the logic of adding following elements is pretty much the same
@@ -444,15 +443,15 @@ function fillSofaAddresses(places){
             // let imAddress = document.createElement("img");//add the container for image
             // //it wont probably be needed
             // imAddress.className = "im-address";
-            // sofaAddress.append(imAddress);
+            // sofaAddress.appendChild(imAddress);
 
             // let addressInfo = document.createElement("div");//add the 
             // addressInfo.className = "address-info";
-            // sofaAddress.append(addressInfo);
+            // sofaAddress.appendChild(addressInfo);
 
             let nameH5 = document.createElement("h5");//add the name of marker
-            nameH5.append(places[i].name);
-            sofaAddress.append(nameH5);
+            nameH5.innerText = places[i].name;
+            sofaAddress.appendChild(nameH5);
 
             let addressP = document.createElement("p");//add the address for marker
             let addressString = "address error";
@@ -460,13 +459,13 @@ function fillSofaAddresses(places){
             function(res, status){
                 if(status=="OK"){
                     addressString = res[0].formatted_address;
-                    addressP.append(addressString);
-                    sofaAddress.append(addressP);
+                    addressP.innerText = addressString;
+                    sofaAddress.appendChild(addressP);
                 }
                 else{//TODO what should happen when you dont get the address(it happens a lot more frequently than expected)
                     console.log("connection error");
-                    addressP.append(addressString);
-                    sofaAddress.append(addressP);
+                    addressP.innerText = addressString;
+                    sofaAddress.appendChild(addressP);
                 }
             });
             
