@@ -19,6 +19,7 @@ let lon = 0;//longitude
 let map = null;//google maps
 let myMarker = null;//the marker which shows your location
 let markers = [];//markers on map
+let bounds = null;
 
 let icons = [
     "images/mk_grey.png",
@@ -345,6 +346,7 @@ function unhighlightMarkers(){//unhilight all markers
 //event when marker was clicked
 function onAddressClick(sofaAddress,markerNumber,place){
 
+    console.log(place);
     $(".sofa-address").hide(0);//hide all markers
     highlightMarker(markerNumber);//highlight the chosen marker on the map
     let descriptionHelp = $(".description-help");//get the marker container
@@ -364,6 +366,17 @@ function onAddressClick(sofaAddress,markerNumber,place){
         closeCurrentMarker();
     }
     markerInfo.appendChild(closeBtn);
+
+    markerInfo = document.createElement("div");//create a button to close the info about current marker
+    divWrap.appendChild(markerInfo);
+    let showBtn = document.createElement("button");
+    showBtn.innerText = "SHOW ROUTE";
+    showBtn.className = "marker-btn";
+    console.log(`https://www.google.com/maps/dir/?api=1&origin=${myMarker.getPosition().lat()},${myMarker.getPosition().lng()}&destination=${place.latitude},${place.longitude}`);
+    showBtn.onclick = function(){
+        window.open(`https://www.google.com/maps/dir/?api=1&origin=${myMarker.getPosition().lat()},${myMarker.getPosition().lng()}&destination=${place.latitude},${place.longitude}`,`_blank`);
+    }
+    markerInfo.appendChild(showBtn);
 
     markerInfo = document.createElement("div");//create wrapper which sometimes would be a grid or not depending on the className
     markerInfo.className = "div-to-make-flex-work";
@@ -479,22 +492,25 @@ function fillMapWithPlaces(map,lang,step,lat,lon,rad){
     if(map!=null){//if the map was initialized
         // let urlCurr = theUrl+`step/${lang}/${step+1}/area/${lat}/${lon}/${rad}`;//url request
         let urlCurr = theUrl+`step/${lang}/${step+1}/area/${lat}/${lon}/1/${rad}/1`;//url request
-        
+        // console.log(myMarker.getPosition());
+        bounds = new google.maps.LatLngBounds();
+        bounds.extend(myMarker.getPosition());
         $.ajax({
             url: urlCurr
         })
         .then(function(placesArr){
-            // console.log(placesArr);
-           clearMap();//clear map from markers if threre are already some
+            clearMap();//clear map from markers if threre are already some
+            
             if(placesArr.length!=0){//if there are any places
+                
                 for(var i=0;i<placesArr.length;i++){
-                    var icon = {
+                    let icon = {
                         url: icons[currentStep+1], // url
                         scaledSize: new google.maps.Size(20, 30), // scaled size
                         origin: new google.maps.Point(0,0), // origin
                         anchor: new google.maps.Point(0, 0) // anchor
                     };//set the icon for marker
-                    var marker = new google.maps.Marker({
+                    let marker = new google.maps.Marker({
                         map: map,
                         icon: icon,
                         place: {
@@ -502,8 +518,11 @@ function fillMapWithPlaces(map,lang,step,lat,lon,rad){
                         location: { lat: placesArr[i].latitude, lng: placesArr[i].longitude}
                         }
                     });//set marker
+                    bounds.extend({ lat: placesArr[i].latitude, lng: placesArr[i].longitude});
                     markers.push(marker);//push marker to gloabal array so that you could delete them in future or change icons
+
                 }
+                map.fitBounds(bounds);
                 fillSofaAddresses(placesArr);//fill the div with information about markers
             }
             else{
@@ -516,7 +535,7 @@ function fillMapWithPlaces(map,lang,step,lat,lon,rad){
 }
 
 function initMap(){//initialize the google map
-    
+    bounds = new google.maps.LatLngBounds();
     geocoder = new google.maps.Geocoder;//get the geocoder to decode placeIds in further
     navigator.geolocation.getCurrentPosition(successMap, errorMap, options);//get location
 }

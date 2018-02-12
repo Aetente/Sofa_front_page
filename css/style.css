@@ -316,6 +316,10 @@ _:-moz-tree-row(hover),.choose-step{
 
 .description-text{
     border-bottom: 1px solid black;
+    white-space: pre-line;
+}
+.step-need{
+    white-space: pre-line;
 }
 
 .map-filler{
