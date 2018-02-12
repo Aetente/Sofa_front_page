@@ -51,12 +51,12 @@ function main(){
     
     $('.scroll-back').click(function () {
         $('.sofa-horiz').animate({
-            scrollLeft: '-=170'
+            scrollLeft: '-=271'
         }, 500, 'linear');
     });//scroll steps back
     $('.scroll-forward').click(function () {
         $('.sofa-horiz').animate({
-            scrollLeft: '+=170'
+            scrollLeft: '+=271'
         }, 500, 'linear');
     });//scroll steps forward
     $('.sofa-search').keypress(
@@ -211,12 +211,14 @@ function setMap(lat,lon){
     var uluru = {lat: lat, lng: lon};
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 12,//TODO set the zoom according to in which radius were markers found
-        center: uluru
+        center: uluru,
+        mapTypeControl: false
     });//create map
     myMarker = new google.maps.Marker({
         position: uluru,
         map: map,
-        icon: icon
+        icon: icon,
+        zIndex: 2
     });//put marker
     fillMapWithPlaces(map,nowLanguage,currentStep,lat,lon,10);//fill the map with markers
 }
@@ -328,6 +330,9 @@ function highlightMarker(n){//highlight the chosen marker
             };//new icon(grey one)
             markers[i].setIcon(icon);//set the grey icon
         }
+        else{
+            markers[i].setZIndex(1);
+        }
     }
 }
 
@@ -340,6 +345,7 @@ function unhighlightMarkers(){//unhilight all markers
             anchor: new google.maps.Point(0, 0) // anchor
         };//the icon according to current step
         markers[i].setIcon(icon);//set the icon
+        markers[i].setZIndex(0);
     }
 }
 
@@ -479,7 +485,7 @@ function fillSofaAddresses(places){
                     console.log(res[0]);
                     // addressString = res[0].formatted_address;
                     let aC = res[0].address_components;
-                    addressString = `${aC[2].short_name}, ${aC[1].short_name}, ${aC[0].short_name}`;
+                    addressString = `${aC[2].long_name}, ${aC[1].short_name}, ${aC[0].short_name}`;
                     addressP.innerText = addressString;
                     sofaAddress.appendChild(addressP);
                 }
@@ -524,7 +530,8 @@ function fillMapWithPlaces(map,lang,step,lat,lon,rad){
                         place: {
                         placeId: placesArr[i].placeId,
                         location: { lat: placesArr[i].latitude, lng: placesArr[i].longitude}
-                        }
+                        },
+                        zIndex: 0
                     });//set marker
                     bounds.extend({ lat: placesArr[i].latitude, lng: placesArr[i].longitude});
                     markers.push(marker);//push marker to gloabal array so that you could delete them in future or change icons

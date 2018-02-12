@@ -64,7 +64,9 @@ body{
 }
 .margin-to-zero{
     margin: 0;
-    /* display: flex; */
+}
+.set-margin-for-header{
+    margin: 0.3em;
 }
 .cas-menu{
     display: grid;
@@ -212,7 +214,7 @@ body{
 @media (max-width: 767px){
 
     .sofa-row {
-        margin-top: 3em;
+        margin-top: 4em;
     }
 
     .strange-pic{
@@ -267,6 +269,8 @@ body{
     /* min-height: 160px;
     max-height: 160px; */
     align-items: center;
+    background-color: rgb(253,253,253);
+    border: 1px solid white;
 }
 .step-image{
     display: inline-block;
@@ -289,7 +293,7 @@ body{
     color: rgb(100,100,100);
 }
 _:-moz-tree-row(hover),.choose-step{
-    margin-top:-50px;
+    margin-top:-2px;
 }
 .scrollbutton-holder{
     display: inline-block;
@@ -358,6 +362,7 @@ _:-moz-tree-row(hover),.choose-step{
 .step-head{
     grid-column: 2;
     grid-row: 1;
+    text-transform: uppercase;
 }
 
 .step-description{
