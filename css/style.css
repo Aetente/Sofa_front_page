@@ -6,6 +6,7 @@ h6{
 }
 a{
     color: black;
+    text-decoration: none;
 }
 
 .loading-window{
@@ -61,6 +62,10 @@ body{
     left:0;
     padding: 0;
 }
+.margin-to-zero{
+    margin: 0;
+    /* display: flex; */
+}
 .cas-menu{
     display: grid;
     grid-template-columns: repeat(3,1fr);
@@ -72,6 +77,8 @@ body{
     text-align: center;
     color: #fff;
     z-index: 9999;
+    align-items: center;
+    /* justify-content: space-around; */
 }
 
 .real-side-menu{
@@ -97,12 +104,12 @@ body{
     /* align-items: center */
 }
 .sofa-search{
-    margin: 10px 0;
+    /* margin: 10px 0; */
     border-radius: 1em;
     /* height: 75%; */
     width: 50%;
     color: #000;
-    transform: translateY(50%);
+    /* transform: translateY(50%); */
 }
 #item1{
     margin-left: 40px;
@@ -137,10 +144,11 @@ body{
 .real-side-menu p{
     width: 3em;
     /* margin-left:-1.3em; */
+    margin: 0.1em 0;
 }
 .sofa-row{
     position: relative;
-    margin-top: 5em;
+    margin-top: 3em;    
     width:100%;
     /* margin-top: 2.6em; */
     z-index: 100;
@@ -168,7 +176,7 @@ body{
     grid-row: 2;
     grid-column: 2;
     position: relative;
-    height: 105px;
+    height: 55px;
     overflow: hidden;
 }
 .hold-info{
@@ -191,7 +199,7 @@ body{
     z-index: 40;
     width: 100%;
     bottom: 0;
-    height: 105px;
+    height: 55px;
 }
 
 .resizeText{
@@ -204,7 +212,7 @@ body{
 @media (max-width: 767px){
 
     .sofa-row {
-        margin-top: 7em;
+        margin-top: 3em;
     }
 
     .strange-pic{
@@ -248,16 +256,17 @@ body{
     overflow: -moz-scrollbars-none;
 }
 .menu-item{
-    display: inline-block;
+    display: inline-flex;
     border-right: 1px solid #aaaa;
     word-wrap: break-word;
     height: 50px;
     /* overflow: hidden;
     text-overflow: ellipsis; */
-    min-width: 170px;
-    max-width: 170px;
+    min-width: 270px;
+    max-width: 270px;
     /* min-height: 160px;
     max-height: 160px; */
+    align-items: center;
 }
 .step-image{
     display: inline-block;
@@ -269,12 +278,15 @@ body{
     font-size: 1em;
     display: inline-block;
     word-wrap: break-word;
-    min-width: 110px;
-    max-width: 110px;
+    min-width: 210px;
+    max-width: 210px;
     white-space: initial;
     overflow: hidden;
     margin-bottom: 0px;
     float: right;
+    font-family: "RobotoCondensed-Light";
+    text-transform: uppercase;
+    color: rgb(100,100,100);
 }
 _:-moz-tree-row(hover),.choose-step{
     margin-top:-50px;
@@ -311,7 +323,8 @@ _:-moz-tree-row(hover),.choose-step{
 }
 .scroll-forward h1, .scroll-back h1{
     height: 50px;
-    transform: translateY(-25%);
+    transform: translateY(-50%);
+    color: #00508c;
 }
 
 .description-text{
@@ -356,6 +369,7 @@ _:-moz-tree-row(hover),.choose-step{
     grid-column: 1;   
     padding: 0.3em;
     overflow-y: scroll;
+    background-color: whitesmoke;
 }
 .description-help{
     grid-column: 2;
@@ -364,9 +378,35 @@ _:-moz-tree-row(hover),.choose-step{
 
 .sofa-address{
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, auto);
     align-items: center;
-    text-align: center;
+    text-align: left;
+    box-shadow: 0px 5px 5px whitesmoke;
+    margin-top: 5px;
+    grid-template-columns: 1fr 2fr 0.2fr;
+}
+
+.name-place{
+    grid-column: 2;
+    margin: 0;
+    display: flex;
+    align-self: flex-end;
+    padding-top: 0.5em;
+}
+.address-name{
+    grid-column: 2;
+    font-size: 0.7em;
+    margin: 0;
+    display: flex;
+    align-self: flex-start;
+    padding-bottom: 0.5em;
+}
+.expand-button{
+    grid-column: 3;
+    grid-row: 2;
+    font-size: 0.7em;
+    margin: 0;
+
 }
 .marker-info{
     display: grid;
@@ -404,7 +444,7 @@ _:-moz-tree-row(hover),.choose-step{
 
 #map{
     /* width: 50vw; */
-    height: 400px;
+    height: 451px;
 }
 
 .control-list-div{

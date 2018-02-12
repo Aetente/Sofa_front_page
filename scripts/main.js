@@ -167,7 +167,7 @@ function setSelectSteps(steps){
 function highlightLanguage(nowLanguage){
     let langs = $(".changeLang");
     for(var i=0; i< langs.length; i++){
-        langs[i].style.color = "rgba(40,40,40,1)";
+        langs[i].style.color = "rgba(110,110,110,1)";
     }
     $(`#${nowLanguage}`).css("color", "#00508c");
 }
@@ -345,8 +345,6 @@ function unhighlightMarkers(){//unhilight all markers
 
 //event when marker was clicked
 function onAddressClick(sofaAddress,markerNumber,place){
-
-    console.log(place);
     $(".sofa-address").hide(0);//hide all markers
     highlightMarker(markerNumber);//highlight the chosen marker on the map
     let descriptionHelp = $(".description-help");//get the marker container
@@ -464,14 +462,24 @@ function fillSofaAddresses(places){
 
             let nameH5 = document.createElement("h5");//add the name of marker
             nameH5.innerText = places[i].name;
+            nameH5.className = "name-place";
             sofaAddress.appendChild(nameH5);
+
+            let holdOpenButton = document.createElement("p");
+            holdOpenButton.className = "expand-button";
+            holdOpenButton.innerText = "V";
+            sofaAddress.appendChild(holdOpenButton);
 
             let addressP = document.createElement("p");//add the address for marker
             let addressString = "address error";
+            addressP.className = "address-name";
             geocoder.geocode({"placeId":places[i].placeId},//decode the placeId to get address
             function(res, status){
                 if(status=="OK"){
-                    addressString = res[0].formatted_address;
+                    console.log(res[0]);
+                    // addressString = res[0].formatted_address;
+                    let aC = res[0].address_components;
+                    addressString = `${aC[2].short_name}, ${aC[1].short_name}, ${aC[0].short_name}`;
                     addressP.innerText = addressString;
                     sofaAddress.appendChild(addressP);
                 }
