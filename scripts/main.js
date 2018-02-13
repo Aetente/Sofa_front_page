@@ -493,6 +493,13 @@ function fillSofaAddresses(places){
             // addressInfo.className = "address-info";
             // sofaAddress.appendChild(addressInfo);
 
+            let placeImg = document.createElement("img");
+            placeImg.src=`http://www.google.com/s2/favicons?domain=${places[i].url}`;
+            placeImg.height = 24;
+            placeImg.width = 24;
+            placeImg.className = "img-place";
+            sofaAddress.appendChild(placeImg);
+
             let nameH5 = document.createElement("h5");//add the name of marker
             nameH5.innerText = places[i].name;
             nameH5.className = "name-place";

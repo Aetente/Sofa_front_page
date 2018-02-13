@@ -460,7 +460,17 @@ _:-moz-tree-row(hover),.choose-step{
     display: flex;
     align-self: flex-end;
     padding-top: 0.5em;
+    
 }
+
+.img-place{
+    grid-column: 1;
+    grid-row: 1/3;
+    display: flex;
+    align-self:center;
+    justify-self: center;
+}
+
 .address-name{
     grid-column: 2;
     font-size: 0.7em;
