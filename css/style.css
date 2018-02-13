@@ -217,7 +217,7 @@ body{
     /* padding-left: 2.5em; */
     display: grid;
     grid-template-rows: auto auto auto;
-    grid-template-columns: 1fr 100fr; 
+    grid-template-columns: 1fr 16fr;
     grid-row-gap: 10px;
     /* margin-left: 1.5em; */
     /* float: right; */
@@ -244,8 +244,8 @@ body{
 .hold-info{
     grid-row: 3;
     grid-column: 2;
-    padding-right: 15px;
-    padding-left: 15px;
+    /* padding-right: 15px; */
+    /* padding-left: 15px; */
     margin-right: auto;
     margin-left: auto;
 }
