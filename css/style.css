@@ -530,6 +530,11 @@ _:-moz-tree-row(hover),.choose-step{
     height: 451px;
 }
 
+.hold-list-div{
+    box-shadow: 0px 5px 5px #969696;
+
+}
+
 .control-list-div{
     background-color : #fff;
     color : rgb(25,25,25);

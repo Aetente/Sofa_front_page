@@ -71,10 +71,21 @@ function main(){
             }
         }//search which is located above in right corner
     )
-
+    setInfoHeight();
     setDataByLang(nowLanguage);//set all info
     setLanguage();//set change language buttons clicks in right menu
     highlightLanguage(nowLanguage);//highlight choosen language
+}
+
+function setInfoHeight(){
+    if(window.innerWidth>767){
+        $(".step-description").css(
+            "grid-template-rows",
+            (window.innerHeight-document.getElementsByClassName("step-description")[0].getBoundingClientRect().y-10)+"px");
+            $(".sofa-map").css(
+                "height",
+                (window.innerHeight-document.getElementsByClassName("sofa-map")[0].getBoundingClientRect().y-10)+"px");
+    }
 }
 
 function setClicksPlusMinusText(){
