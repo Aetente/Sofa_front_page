@@ -13,6 +13,35 @@ a{
     cursor: pointer;
 }
 
+.above-current-section{
+    background-color: #aaaaaa;
+    border-radius: 0px 0px 10px 0px;
+}
+
+.pagination{
+    display: flex;
+    flex-direction: column;
+    margin-top: 1em;
+}
+.pagination a{
+    padding: 0;
+    margin-left: 3px;
+    color: #00508c;
+    font-size: 0.7em;
+    display: flex;
+    justify-content: center;
+    flex-flow: column;
+    height: 9em;
+}
+.pagination a.active{
+    background-color: white;
+    border-radius: 5px 0px 0px 5px;
+}
+.pagination a:hover:not(active){
+    background-color: whitesmoke;
+    border-radius: 5px 0px 0px 5px;
+}
+
 /* the loading window before request is send */
 .loading-window{ 
     position: fixed;
