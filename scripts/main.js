@@ -92,16 +92,12 @@ function setClicksPlusMinusText(){
 
 function zoomInText(){
     zoomValue+=0.1;
-    // document.body.style.zoom=zoomValue;
-    // $("body").css("-moz-transform",`scale(${zoomValue},${zoomValue})`);
-    $(".description-text").css("font-size",zoomValue+"em");
+    $(".info-of-step").css("font-size",zoomValue+"em");
 }
 
 function zoomOutText(){
     zoomValue-=0.1;
-    // document.body.style.zoom=zoomValue;
-    // $("body").css("-moz-transform",`scale(${zoomValue},${zoomValue})`);
-    $(".description-text").css("font-size",zoomValue+"em");
+    $(".info-of-step").css("font-size",zoomValue+"em");
 }
 
 function showLoading(){
