@@ -108,15 +108,18 @@ body{
     letter-spacing: 0.01px;
     position: relative;
     background-color: #aaaaaa;
-    padding-right: 15px;
-    padding-left: 15px;
+    /* padding-right: 15px; */
+    /* padding-left: 15px; */
     margin-right: auto;
     margin-left: auto;
-    width: 1em;
+    /* width: 3em; */
     float: left;
     text-align: center;
     height: 100vh;
     z-index: 9999;
+    display: flow-root;
+    /* align-items: center; */
+    justify-content: space-between;
 }
 
 .sofa-header.affix {
@@ -161,14 +164,16 @@ body{
 
 .side-menu-buttons{
     font-size: 0.7em;
-    width: 3em;
-    margin-left: -1.3em;
+    /* width: 3em; */
+    /* margin-left: -1.3em; */
     text-align: center;
+    display: flow-root;
+    margin-top: 1em;
 }
 .real-side-menu p{
-    width: 3em;
-    /* margin-left:-1.3em; */
-    margin: 0.1em 0;
+       /* width: 3em; */
+    /* margin-left: -1.3em; */
+    margin: 0em 0;
 }
 /* the main content of the website */
 .sofa-row{
@@ -468,12 +473,17 @@ _:-moz-tree-row(hover),.choose-step{
     text-decoration: none;
 }
 .languages{
-    width: 3em;
-    margin-left: -1em;
+    margin-top: 1em;
+    /* width: 3em; */ 
+    /* margin-left: -1em; */
+    display: flex-root;
 }
 .textSize{
-    width: 3em;
-    margin-left: -1em;
+    /* width: 3em;  */
+    align-self: center;
+    margin-top: 1em;
+    display: flex-root;
+    /* margin-left: -1em; */
 }
 
 #map{
