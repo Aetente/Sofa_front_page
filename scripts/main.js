@@ -1,6 +1,10 @@
 $().ready(main);
 
+let zoomValue = 1;
 const theUrl = "https://olimshelper.herokuapp.com/";//api
+const MIN_KM=1;
+const MAX_KM = 10;
+const INC = 1;
 let currentStep = 0;//steps
 let stepColors= [
     "#00508c",
@@ -48,7 +52,7 @@ let cityList = [];//the list of cities which will appear when geolocation is loc
 let currentCity;
 
 function main(){
-    
+    setClicksPlusMinusText();
     $('.scroll-back').click(function () {
         $('.sofa-horiz').animate({
             scrollLeft: '-=271'
@@ -73,6 +77,33 @@ function main(){
     highlightLanguage(nowLanguage);//highlight choosen language
 }
 
+function setClicksPlusMinusText(){
+    $("#plus-text").click(
+        function(){
+            zoomInText();
+        }
+    );
+    $("#minus-text").click(
+        function(){
+            zoomOutText();
+        }
+    );
+}
+
+function zoomInText(){
+    zoomValue+=0.1;
+    // document.body.style.zoom=zoomValue;
+    // $("body").css("-moz-transform",`scale(${zoomValue},${zoomValue})`);
+    $(".description-text").css("font-size",zoomValue+"em");
+}
+
+function zoomOutText(){
+    zoomValue-=0.1;
+    // document.body.style.zoom=zoomValue;
+    // $("body").css("-moz-transform",`scale(${zoomValue},${zoomValue})`);
+    $(".description-text").css("font-size",zoomValue+"em");
+}
+
 function showLoading(){
     $(".loading-window").show(0);
 }
@@ -83,13 +114,13 @@ function hideLoading(){
 
 function setRightTextAlign(){
     $(".info-of-step").css("text-align","right");
-    $(".menu-item p").css("text-align","right");
+    // $(".menu-item p").css("text-align","right");
     
 }
 
 function setLeftTextAlign(){
     $(".info-of-step").css("text-align","left");
-    $(".menu-item p").css("text-align","left");
+    // $(".menu-item p").css("text-align","left");
 }
 
 //set all info
@@ -107,7 +138,7 @@ function setDataByLang(lang){
         setInfo(steps,currentStep);//set the info about the step
         setTitleText(lang);//set new title according to language you chose
         highlightLanguage(lang);//highlight the chosen language
-        fillMapWithPlaces(map,lang,currentStep,lat,lon,10);//fill the map with markers
+        fillMapWithPlaces(map,lang,currentStep,lat,lon,MIN_KM,MAX_KM,INC);//fill the map with markers
         hideLoading();
     });
 }
@@ -137,7 +168,7 @@ function setButtonClicks(steps){
                 currentStep=(+theId.substring(4,theId.length))-1;//change the value of current step
                 setColorHeaderInfo(currentStep);//set color for header of info according to chosen step
                 setInfo(steps,currentStep);//set the info according to the step
-                fillMapWithPlaces(map,nowLanguage,currentStep,lat,lon,10);//fill the map with markers according to the step
+                fillMapWithPlaces(map,nowLanguage,currentStep,lat,lon,MIN_KM,MAX_KM,INC);//fill the map with markers according to the step
             }
         );
     }
@@ -197,7 +228,7 @@ function setTitleText(nowLanguage){
 function changePosition(lat,lon){
     myMarker.setPosition({lat:lat,lng:lon});
     map.setCenter({lat:lat,lng:lon});
-    fillMapWithPlaces(map,nowLanguage,currentStep,lat,lon,10);
+    fillMapWithPlaces(map,nowLanguage,currentStep,lat,lon,MIN_KM,MAX_KM,INC);
 }
 
 function setMap(lat,lon){
@@ -210,7 +241,7 @@ function setMap(lat,lon){
     };//set icon for my position
     var uluru = {lat: lat, lng: lon};
     map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 12,//TODO set the zoom according to in which radius were markers found
+        zoom: 12,
         center: uluru,
         mapTypeControl: false
     });//create map
@@ -220,7 +251,7 @@ function setMap(lat,lon){
         icon: icon,
         zIndex: 2
     });//put marker
-    fillMapWithPlaces(map,nowLanguage,currentStep,lat,lon,10);//fill the map with markers
+    fillMapWithPlaces(map,nowLanguage,currentStep,lat,lon,MIN_KM,MAX_KM,INC);//fill the map with markers
 }
 
 //if succesided to get geolocation
@@ -451,7 +482,7 @@ function fillSofaAddresses(places){
     if(places.length>0){//if there are any places
         for(let i=0; i<places.length; i++){
             let sofaAddress = document.createElement("div");//create the div which contains some information about the marker
-            sofaAddress.className = "sofa-address marker"+i;//set the class name for it to set styles from css
+            sofaAddress.className = "sofa-address pointable marker"+i;//set the class name for it to set styles from css
             descriptionHelp.append(sofaAddress);//appendChild it to element where it should be contained
             sofaAddress.onclick = ()=> onAddressClick(sofaAddress,i,places[i]);// set the click event. when it clicked the more information appears
 
@@ -479,10 +510,11 @@ function fillSofaAddresses(places){
             let addressP = document.createElement("p");//add the address for marker
             let addressString = "address error";
             addressP.className = "address-name";
+            console.log(places[i]);
             geocoder.geocode({"placeId":places[i].placeId},//decode the placeId to get address
             function(res, status){
                 if(status=="OK"){
-                    console.log(res[0]);
+                    // console.log(res[0]);
                     // addressString = res[0].formatted_address;
                     let aC = res[0].address_components;
                     addressString = `${aC[2].long_name}, ${aC[1].short_name}, ${aC[0].short_name}`;
@@ -500,12 +532,11 @@ function fillSofaAddresses(places){
     }
 }
 
-//TODO rewrite the arguments of the method so it would fit the API url request
 //fill the map with markers
-function fillMapWithPlaces(map,lang,step,lat,lon,rad){
+function fillMapWithPlaces(map,lang,step,lat,lon,min,max,inc){
     if(map!=null){//if the map was initialized
         // let urlCurr = theUrl+`step/${lang}/${step+1}/area/${lat}/${lon}/${rad}`;//url request
-        let urlCurr = theUrl+`step/${lang}/${step+1}/area/${lat}/${lon}/1/${rad}/1`;//url request
+        let urlCurr = theUrl+`step/${lang}/${step+1}/area/${lat}/${lon}/${min}/${max}/${inc}`;//url request
         // console.log(myMarker.getPosition());
         bounds = new google.maps.LatLngBounds();
         bounds.extend(myMarker.getPosition());

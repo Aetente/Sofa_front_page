@@ -9,6 +9,10 @@ a{
     text-decoration: none;
 }
 
+.pointable{
+    cursor: pointer;
+}
+
 /* the loading window before request is send */
 .loading-window{ 
     position: fixed;
