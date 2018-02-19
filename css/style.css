@@ -133,6 +133,7 @@ body{
 
 /* the side menu */
 .real-side-menu{
+    width: 2em;
     align-items: center;
     letter-spacing: 0.01px;
     position: relative;
@@ -252,7 +253,7 @@ body{
 /* the grid to divide info sections */
 .the-info{
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(47vw,1fr));
 }
 /* the horizontal scroll menu button holder */
 .sofa-horiz{
@@ -396,7 +397,7 @@ _:-moz-tree-row(hover),.choose-step{
 .description-text{
     border-bottom: 1px solid black;
     white-space: pre-line;
-    color: #a7a7a7;
+    color: #474747;
 }
 .step-need{
     white-space: pre-line;
@@ -406,11 +407,12 @@ _:-moz-tree-row(hover),.choose-step{
     background-color: rgba(200,200,200,1);
 }
 .step-header{
+    
     color: #fff;
     background-color: #00508c;
     align-items: center;
     display: grid;
-    grid-template-columns: auto auto repeat(30,1fr);
+    grid-template-columns: auto auto repeat(30,1fr) auto;
     grid-gap: 0.1em;
 }
 .step-img{
@@ -427,6 +429,10 @@ _:-moz-tree-row(hover),.choose-step{
     grid-row: 1;
     text-transform: uppercase;
 }
+.info-head{
+    grid-column: 33;
+    padding-right: 1em;
+}
 
 .step-description{
     display: grid;
@@ -434,12 +440,16 @@ _:-moz-tree-row(hover),.choose-step{
     grid-template-rows: 400px;
 }
 .info-of-step{
-    grid-column: 1;   
+    grid-column: 1/3;  
     padding: 0.3em;
     overflow-y: scroll;
     background-color: whitesmoke;
 }
 .description-help{
+    grid-column: 1/3;
+    overflow-y: scroll;
+}
+.info-of-marker{
     grid-column: 2;
     overflow-y: scroll;
 }

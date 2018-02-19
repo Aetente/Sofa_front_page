@@ -77,16 +77,16 @@ let myLocationText={
 };
 let weekDay ={ 
     en:[
-        "mon","tue","wed","thu","fri","sat","sun"
+        "sun","mon","tue","wed","thu","fri","sat"
     ],
     ru:[
-        "пон","втр","срд","чтв","птн","сбт","вск"
+        "вск","пон","втр","срд","чтв","птн","сбт"
     ],
     he:[
-        "ב","ג","ד","ה","ו","ש","א"
+        "א", "ב","ג","ד","ה","ו","ש"
     ],
     fr:[
-        "lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"
+        "dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"
     ],
 };//this will be required when you look info about marker
 let fullLangName = {
@@ -98,11 +98,12 @@ let fullLangName = {
 //options for google maps
 var options = {
     enableHighAccuracy: true,
-    timeout: 5000,
+    // timeout: 5000,
     maximumAge: 0
 };
 let cityList = [];//the list of cities which will appear when geolocation is locked
 let currentCity;
+let showTheInfo = false;
 
 function main(){//intialise everything
     setClicksPlusMinusText();
@@ -124,13 +125,38 @@ function main(){//intialise everything
             }
         }//search which is located above in right corner
     )
+    toggleShowInfo(showTheInfo);
     setInfoHeight();
     setDataByLang(nowLanguage);//set all info
     setLanguage();//set change language buttons clicks in right menu
     highlightLanguage(nowLanguage);//highlight choosen language
     // prepareLocationList();
     setLocationList();
-    setGoToMinesterySiteBtn();
+    // setGoToMinesterySiteBtn();
+    setInfoBtnClick()
+}
+
+function setInfoBtnClick(){
+    $(".info-head").click(
+        function(){
+            showTheInfo = !showTheInfo;
+            toggleShowInfo(showTheInfo);
+        }
+    )
+}
+
+function toggleShowInfo(toShow){
+    if(toShow){
+        $(".info-of-step").show();
+        $(".description-help").hide();
+        $(".info-of-marker").hide();
+        
+    }
+    else{
+        $(".info-of-step").hide();
+        $(".description-help").show();
+        $(".info-of-marker").show();
+    }
 }
 
 function setGoToMinesterySiteBtn(){
@@ -197,6 +223,7 @@ function setLeftTextAlign(){
 //set all info
 function setDataByLang(lang){
     showLoading();
+    $(".div-to-remove").remove();
     let urlCurr = theUrl+lang;//url to get info by language
     $.ajax({
         url: urlCurr
@@ -210,6 +237,7 @@ function setDataByLang(lang){
         setTitleText(lang);//set new title according to language you chose
         highlightLanguage(lang);//highlight the chosen language
         fillMapWithPlaces(map,lang,currentStep,lat,lon,MIN_KM,MAX_KM,INC);//fill the map with markers
+        if(map)
         hideLoading();
     });
 }
@@ -235,6 +263,8 @@ function setButtonClicks(steps){
     for(var i=0;i<9;i++){
         $("#item"+(i+1)).click(//when button to change step clicked
             function(){
+                $(".description-help").css("grid-column","1/3");
+                $(".div-to-remove").remove();
                 theId = $(this).attr("id");//get the id of the clicked button
                 currentStep=(+theId.substring(4,theId.length))-1;//change the value of current step
                 setColorHeaderInfo(currentStep);//set color for header of info according to chosen step
@@ -331,6 +361,7 @@ function successMap(pos){
     lat = pos.coords.latitude;
     lon = pos.coords.longitude;
     setMap(lat,lon);
+    
 }
 
 function setLocationList(){
@@ -423,11 +454,13 @@ function errorMap(err) {
                 lon = TelAviv.longitude;
                 setMap(lat,lon);
                 document.getElementsByClassName("the-list")[0].value = currentCity;
+                hideLoading();
             }
         );
     }
     else{
         document.getElementsByClassName("the-list")[0].value = currentCity;
+        hideLoading();
     }
 };
 
@@ -478,12 +511,14 @@ function unhighlightMarkers(){//unhilight all markers
 
 //event when marker was clicked
 function onAddressClick(sofaAddress,markerNumber,place){
-    $(".sofa-address").hide(0);//hide all markers
+    // $(".sofa-address").hide(0);//hide all markers
+    $(".description-help").css("grid-column","1");
+    $(".div-to-remove").remove();
     highlightMarker(markerNumber);//highlight the chosen marker on the map
-    let descriptionHelp = $(".description-help");//get the marker container
+    let infoOfMarker = $(".info-of-marker");//get the marker container
     let divToRemove =document.createElement("div");//create the element where the information about marker would be put, so that it could easily be removed without deleting data about all markers
     divToRemove.className = "div-to-remove";
-    descriptionHelp.append(divToRemove);
+    infoOfMarker.append(divToRemove);
 
     let divWrap = document.createElement("div");//create wrapper
      divToRemove.appendChild(divWrap);
@@ -495,6 +530,7 @@ function onAddressClick(sofaAddress,markerNumber,place){
     closeBtn.className = "marker-btn";
     closeBtn.onclick = function(){
         closeCurrentMarker();
+        $(".description-help").css("grid-column","1/3");
     }
     markerInfo.appendChild(closeBtn);
 
@@ -503,7 +539,7 @@ function onAddressClick(sofaAddress,markerNumber,place){
     let showBtn = document.createElement("button");
     showBtn.innerText = showRouteBtnText[nowLanguage];
     showBtn.className = "marker-btn";
-    console.log(`https://www.google.com/maps/dir/?api=1&origin=${myMarker.getPosition().lat()},${myMarker.getPosition().lng()}&destination=${place.latitude},${place.longitude}`);
+    // console.log(`https://www.google.com/maps/dir/?api=1&origin=${myMarker.getPosition().lat()},${myMarker.getPosition().lng()}&destination=${place.latitude},${place.longitude}`);
     showBtn.onclick = function(){
         window.open(`https://www.google.com/maps/dir/?api=1&origin=${myMarker.getPosition().lat()},${myMarker.getPosition().lng()}&destination=${place.latitude},${place.longitude}`,`_blank`);
     }
@@ -611,27 +647,34 @@ function fillSofaAddresses(places){
             sofaAddress.appendChild(holdOpenButton);
 
             let addressP = document.createElement("p");//add the address for marker
-            let addressString = "address error";
+            let addressString = "";
             addressP.className = "address-name";
             // console.log(places[i]);
             geocoder.geocode({"placeId":places[i].placeId},//decode the placeId to get address
             function(res, status){
-                if(status=="OK"){
-                    // console.log(res[0]);
-                    // addressString = res[0].formatted_address;
-                    let aC = res[0].address_components;
-                    addressString = `${aC[2].long_name}, ${aC[1].short_name}, ${aC[0].short_name}`;
-                    addressP.innerText = addressString;
-                    sofaAddress.appendChild(addressP);
-                }
-                else{//TODO what should happen when you dont get the address(it happens a lot more frequently than expected)
-                    console.log("connection error");
-                    addressP.innerText = addressString;
-                    sofaAddress.appendChild(addressP);
-                }
+                geocodeFunc(res,status,places[i].placeId,addressP,sofaAddress);
             });
-            
         }
+    }
+}
+
+function geocodeFunc(res,status,placeId,addressP,sofaAddress){
+    if(status=="OK"){
+        // console.log(res[0]);
+        // addressString = res[0].formatted_address;
+        let aC = res[0].address_components;
+        let addressString = `${aC[2].long_name}, ${aC[1].short_name}, ${aC[0].short_name}`;
+        addressP.innerText = addressString;
+        sofaAddress.appendChild(addressP);
+    }
+    else{//TODO what should happen when you dont get the address(it happens a lot more frequently than expected)
+        console.log(status);
+        // geocoder.geocode({"placeId":placeId},//decode the placeId to get address
+        // function(res, status){
+        //     geocodeFunc(res,status,placeId,addressP,sofaAddress);
+        // });
+        addressP.innerText = addressString;
+        sofaAddress.appendChild(addressP);
     }
 }
 
@@ -675,12 +718,15 @@ function fillMapWithPlaces(map,lang,step,lat,lon,min,max,inc){
                 fillSofaAddresses(placesArr);//fill the div with information about markers
             }
             else{
-                let descriptionHelp = $(".description-help");
-                descriptionHelp.empty();
+                let infoOfMarker = $(".info-of-marker");
+                infoOfMarker.empty();
+                $(".sofa-address").empty();
                 console.log("no places found");
             }
         });
+        hideLoading();
     }
+    
 }
 
 function initMap(){//initialize the google map
