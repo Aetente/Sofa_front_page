@@ -69,6 +69,12 @@ let scheduleText = {
     he: "לוח זמנים",
     fr: "HORAIRE"
 };
+let myLocationText={
+    en: "my location",
+    ru: "мое расположение",
+    he: "המיקום שלי",
+    fr: "mon emplacement"
+};
 let weekDay ={ 
     en:[
         "mon","tue","wed","thu","fri","sat","sun"
@@ -92,7 +98,7 @@ var options = {
 let cityList = [];//the list of cities which will appear when geolocation is locked
 let currentCity;
 
-function main(){
+function main(){//intialise everything
     setClicksPlusMinusText();
     $('.scroll-back').click(function () {
         $('.sofa-horiz').animate({
@@ -116,6 +122,8 @@ function main(){
     setDataByLang(nowLanguage);//set all info
     setLanguage();//set change language buttons clicks in right menu
     highlightLanguage(nowLanguage);//highlight choosen language
+    // prepareLocationList();
+    setLocationList();
 }
 
 function setInfoHeight(){
@@ -304,6 +312,7 @@ function setMap(lat,lon){
 
 //if succesided to get geolocation
 function successMap(pos){
+    currentCity = "0";
     lat = pos.coords.latitude;
     lon = pos.coords.longitude;
     setMap(lat,lon);
@@ -320,6 +329,7 @@ function setLocationList(){
             $(".hold-list-div").remove();
             let holdListDiv = document.createElement("div");
             holdListDiv.className = "hold-list-div";
+            $(".hold-search").append(holdListDiv);
 
             let controlListDiv = document.createElement("div");
             controlListDiv.className = "control-list-div";
@@ -327,6 +337,13 @@ function setLocationList(){
 
             let currentCityIndex = 0;
             let listOfCitiesSelect = document.createElement("select");
+            listOfCitiesSelect.className = "the-list";
+
+            let cityOption = document.createElement("option");
+            cityOption.name = myLocationText[nowLanguage];
+            cityOption.innerHTML = myLocationText[nowLanguage];
+            cityOption.value = "0";
+            listOfCitiesSelect.appendChild(cityOption);
             for(let i=0; i< cityList.length; i++){
                 let strCoords = cityList[i].latitude+"|"+cityList[i].longitude;
                 if(strCoords==currentCity){
@@ -340,47 +357,63 @@ function setLocationList(){
             }
             
             listOfCitiesSelect.onchange = function(){
-                currentCity = listOfCitiesSelect.value;
-                let coords = listOfCitiesSelect.value.split("|");
-                lat = +coords[0];
-                lon = +coords[1];
-                changePosition(lat, lon);
+                let theCurrentCity = listOfCitiesSelect.value;
+                if( theCurrentCity!="0"){
+                // currentCity = listOfCitiesSelect.value;
+                    currentCity = theCurrentCity;
+                    let coords = currentCity.split("|");
+                    lat = +coords[0];
+                    lon = +coords[1];
+                    changePosition(lat, lon);
+                }
+                else{
+                    navigator.geolocation.getCurrentPosition(successMap, errorMap, options);//get location
+                }
             }
             controlListDiv.appendChild(listOfCitiesSelect);
-            listOfCitiesSelect.value = cityList[currentCityIndex].latitude+"|"+cityList[currentCityIndex].longitude;
-
-            holdListDiv.index = 1;
-            map.controls[google.maps.ControlPosition.TOP_CENTER].push(holdListDiv);
+            if(currentCityIndex){
+                listOfCitiesSelect.value = cityList[currentCityIndex].latitude+"|"+cityList[currentCityIndex].longitude;
+            }else{
+                listOfCitiesSelect.value = "0";
+            }
+            // holdListDiv.index = 1;
+            // map.controls[google.maps.ControlPosition.TOP_CENTER].push(holdListDiv);
         }
     );
 }
+
 //if geolocation error happened
 function errorMap(err) {
     console.warn(`ERROR(${err.code}): ${err.message}`);
     // $(".step-description").css("grid-template-columns", "1fr");
     // $(".the-info").css("grid-template-columns","1fr");
-    let urlCurr = theUrl + `${nowLanguage}/city`;
-    $.ajax({
-        url: urlCurr
-    })
-    .then(
-        (data)=>{
-            cityList = data;
-            let TelAviv = null;
-            TelAviv = data.find(
-                (city)=>{
-                    if(city.name=="Tel Aviv"||city.name == "תל אביב"||city.name=="Тель-Авив"){
-                        return city;
+    if(!currentCity){
+        let urlCurr = theUrl + `${nowLanguage}/city`;
+        $.ajax({
+            url: urlCurr
+        })
+        .then(
+            (data)=>{
+                cityList = data;
+                let TelAviv = null;
+                TelAviv = data.find(
+                    (city)=>{
+                        if(city.name=="Tel Aviv"||city.name == "תל אביב"||city.name=="Тель-Авив"){
+                            return city;
+                        }
                     }
-                }
-            );
-            currentCity = TelAviv.latitude+"|"+TelAviv.longitude;
-            lat = TelAviv.latitude;
-            lon = TelAviv.longitude;
-            setMap(lat,lon);
-            setLocationList()
-        }
-    );
+                );
+                currentCity = TelAviv.latitude+"|"+TelAviv.longitude;
+                lat = TelAviv.latitude;
+                lon = TelAviv.longitude;
+                setMap(lat,lon);
+                document.getElementsByClassName("the-list")[0].value = currentCity;
+            }
+        );
+    }
+    else{
+        document.getElementsByClassName("the-list")[0].value = currentCity;
+    }
 };
 
 $(window).on( 'resize',
@@ -565,7 +598,7 @@ function fillSofaAddresses(places){
             let addressP = document.createElement("p");//add the address for marker
             let addressString = "address error";
             addressP.className = "address-name";
-            console.log(places[i]);
+            // console.log(places[i]);
             geocoder.geocode({"placeId":places[i].placeId},//decode the placeId to get address
             function(res, status){
                 if(status=="OK"){
