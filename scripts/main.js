@@ -89,6 +89,12 @@ let weekDay ={
         "lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"
     ],
 };//this will be required when you look info about marker
+let fullLangName = {
+    en: "English",
+    ru: "Russian",
+    he: "Hebrew",
+    fr: "French"
+}
 //options for google maps
 var options = {
     enableHighAccuracy: true,
@@ -124,6 +130,15 @@ function main(){//intialise everything
     highlightLanguage(nowLanguage);//highlight choosen language
     // prepareLocationList();
     setLocationList();
+    setGoToMinesterySiteBtn();
+}
+
+function setGoToMinesterySiteBtn(){
+    $("#go-to-minestery-site").click(
+        function(){
+            window.open(`http://www.moia.gov.il/${fullLangName[nowLanguage]}`,`_blank`);
+        }
+    )
 }
 
 function setInfoHeight(){
