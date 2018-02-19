@@ -39,9 +39,19 @@ let icons = [
     "images/ic_my_location.png"
 ];//icons for markers
 let geocoder;//with this you decode placeId to get more information
-let weekDay = [
-    "mon","tue","wed","thu","fri","sat","sun"
-];//this will be required when you look info about marker
+let weekDay ={ en:[
+                    "mon","tue","wed","thu","fri","sat","sun"
+                ],
+                ru:[
+                    "пон","втр","срд","чтв","птн","сбт","вск"
+                ],
+                he:[
+                    "ב","ג","ד","ה","ו","ש","א"
+                ],
+                fr:[
+                    "lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"
+                ],
+};//this will be required when you look info about marker
 //options for google maps
 var options = {
     enableHighAccuracy: true,
@@ -455,7 +465,7 @@ function onAddressClick(sofaAddress,markerNumber,place){
         let strDay = place.schedule[k];
         let nameWeek = document.createElement("p");
         nameWeek.className = "make-flex";
-        nameWeek.innerText = weekDay[k];
+        nameWeek.innerText = weekDay[nowLanguage][k];
         scheduleP.innerText = strDay;
         markerInfo.appendChild(nameWeek);
         markerInfo.appendChild(scheduleP);
