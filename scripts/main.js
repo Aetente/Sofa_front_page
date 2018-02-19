@@ -39,18 +39,49 @@ let icons = [
     "images/ic_my_location.png"
 ];//icons for markers
 let geocoder;//with this you decode placeId to get more information
-let weekDay ={ en:[
-                    "mon","tue","wed","thu","fri","sat","sun"
-                ],
-                ru:[
-                    "пон","втр","срд","чтв","птн","сбт","вск"
-                ],
-                he:[
-                    "ב","ג","ד","ה","ו","ש","א"
-                ],
-                fr:[
-                    "lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"
-                ],
+let closeBtnText = {
+    en: "CLOSE",
+    ru: "ЗАКРЫТЬ",
+    he: "לסגור",
+    fr: "FERMER"
+};
+let showRouteBtnText = {
+    en: "SHOW ROUTE",
+    ru: "ПОКАЗАТЬ ПУТЬ",
+    he: "להראות את הדרך",
+    fr: "MONTRER LE CHEMIN"
+};
+let goToTheSiteBtnText = {
+    en: "GO TO THE SITE",
+    ru: "ПЕРЕЙТИ К САЙТУ",
+    he: "עבור אל האתר",
+    fr: "ALLER AU SITE"
+};
+let phonesText = {
+    en: "PHONES",
+    ru: "ТЕЛЕФОНЫ",
+    he: "טלפונים",
+    fr: "TELEPHONES"
+};
+let scheduleText = {
+    en: "SCHEDULE",
+    ru: "РАСПИСАНИЕ",
+    he: "לוח זמנים",
+    fr: "HORAIRE"
+};
+let weekDay ={ 
+    en:[
+        "mon","tue","wed","thu","fri","sat","sun"
+    ],
+    ru:[
+        "пон","втр","срд","чтв","птн","сбт","вск"
+    ],
+    he:[
+        "ב","ג","ד","ה","ו","ש","א"
+    ],
+    fr:[
+        "lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"
+    ],
 };//this will be required when you look info about marker
 //options for google maps
 var options = {
@@ -412,7 +443,7 @@ function onAddressClick(sofaAddress,markerNumber,place){
     let markerInfo = document.createElement("div");//create a button to close the info about current marker
     divWrap.appendChild(markerInfo);
     let closeBtn = document.createElement("button");
-    closeBtn.innerText = "CLOSE";
+    closeBtn.innerText = closeBtnText[nowLanguage];
     closeBtn.className = "marker-btn";
     closeBtn.onclick = function(){
         closeCurrentMarker();
@@ -422,7 +453,7 @@ function onAddressClick(sofaAddress,markerNumber,place){
     markerInfo = document.createElement("div");//create a button to close the info about current marker
     divWrap.appendChild(markerInfo);
     let showBtn = document.createElement("button");
-    showBtn.innerText = "SHOW ROUTE";
+    showBtn.innerText = showRouteBtnText[nowLanguage];
     showBtn.className = "marker-btn";
     console.log(`https://www.google.com/maps/dir/?api=1&origin=${myMarker.getPosition().lat()},${myMarker.getPosition().lng()}&destination=${place.latitude},${place.longitude}`);
     showBtn.onclick = function(){
@@ -439,7 +470,7 @@ function onAddressClick(sofaAddress,markerNumber,place){
     markerInfo.appendChild(nameH5);
 
     let phoneH6 = document.createElement("h6");//put the name of the marker
-    phoneH6.innerText = "PHONES:";
+    phoneH6.innerText = phonesText[nowLanguage]+ ":";
     divWrap.appendChild(phoneH6);
 
     for(var j=0; j<place.phones.length; j++){//put the phone numbers of current marker
@@ -453,7 +484,7 @@ function onAddressClick(sofaAddress,markerNumber,place){
     }
 
     let scheduleH6 = document.createElement("h6");//put the name of the marker
-    scheduleH6.innerText = "SCHEDULE:";
+    scheduleH6.innerText = scheduleText[nowLanguage]+ ":";
     divWrap.appendChild(scheduleH6);
 
     for(var k=0; k<7;k++){//put the schedule of current marker
@@ -475,7 +506,7 @@ function onAddressClick(sofaAddress,markerNumber,place){
     markerInfo = document.createElement("div");//create a button to go to the website of current marker
     divWrap.appendChild(markerInfo);
     let urlBtn = document.createElement("button");
-    urlBtn.innerText = "GO TO THE SITE";
+    urlBtn.innerText = goToTheSiteBtnText[nowLanguage];
     urlBtn.className = "marker-btn";
     urlBtn.onclick = function(){
         window.open("http://"+place.url,"_blank");
