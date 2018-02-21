@@ -344,7 +344,9 @@ function setMap(lat,lon){
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 12,
         center: uluru,
-        mapTypeControl: false
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: false
     });//create map
     myMarker = new google.maps.Marker({
         position: uluru,
