@@ -526,17 +526,7 @@ function onAddressClick(sofaAddress,markerNumber,place){
      divToRemove.appendChild(divWrap);
 
     let markerInfo = document.createElement("div");//create a button to close the info about current marker
-    divWrap.appendChild(markerInfo);
-    let closeBtn = document.createElement("button");
-    closeBtn.innerText = closeBtnText[nowLanguage];
-    closeBtn.className = "marker-btn";
-    closeBtn.onclick = function(){
-        closeCurrentMarker();
-        $(".description-help").css("grid-column","1/3");
-    }
-    markerInfo.appendChild(closeBtn);
-
-    markerInfo = document.createElement("div");//create a button to close the info about current marker
+    markerInfo.className="marker-holder";
     divWrap.appendChild(markerInfo);
     let showBtn = document.createElement("button");
     showBtn.innerText = showRouteBtnText[nowLanguage];
@@ -546,6 +536,22 @@ function onAddressClick(sofaAddress,markerNumber,place){
         window.open(`https://www.google.com/maps/dir/?api=1&origin=${myMarker.getPosition().lat()},${myMarker.getPosition().lng()}&destination=${place.latitude},${place.longitude}`,`_blank`);
     }
     markerInfo.appendChild(showBtn);
+    let urlBtn = document.createElement("button");
+    urlBtn.innerText = goToTheSiteBtnText[nowLanguage];
+    urlBtn.className = "marker-btn";
+    urlBtn.onclick = function(){
+        window.open("http://"+place.url,"_blank");
+    }
+    markerInfo.appendChild(urlBtn);
+    let closeBtn = document.createElement("button");
+    closeBtn.innerText = closeBtnText[nowLanguage];
+    closeBtn.className = "marker-btn";
+    closeBtn.onclick = function(){
+        closeCurrentMarker();
+        $(".description-help").css("grid-column","1/3");
+    }
+    markerInfo.appendChild(closeBtn);
+    
 
     markerInfo = document.createElement("div");//create wrapper which sometimes would be a grid or not depending on the className
     markerInfo.className = "div-to-make-flex-work";
@@ -587,20 +593,6 @@ function onAddressClick(sofaAddress,markerNumber,place){
         markerInfo.appendChild(nameWeek);
         markerInfo.appendChild(scheduleP);
     }
-
-
-    markerInfo = document.createElement("div");//create a button to go to the website of current marker
-    divWrap.appendChild(markerInfo);
-    let urlBtn = document.createElement("button");
-    urlBtn.innerText = goToTheSiteBtnText[nowLanguage];
-    urlBtn.className = "marker-btn";
-    urlBtn.onclick = function(){
-        window.open("http://"+place.url,"_blank");
-    }
-    markerInfo.appendChild(urlBtn);
-
-    
-
 }
 
 function closeCurrentMarker(){//close the clicked marker

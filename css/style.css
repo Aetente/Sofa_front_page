@@ -561,3 +561,8 @@ _:-moz-tree-row(hover),.choose-step{
     border: none;
     cursor: pointer;
 }
+
+.marker-holder{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
