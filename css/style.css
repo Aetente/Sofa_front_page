@@ -313,7 +313,7 @@ body{
     .the-info{
         display: grid;
         grid-template-rows: repeat(2, 1fr);
-        grid-template-columns: auto;
+        grid-template-columns: 80vw;
     }
 }
 .sofa-horiz::-webkit-scrollbar { 
